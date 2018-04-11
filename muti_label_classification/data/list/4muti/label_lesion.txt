@@ -1,0 +1,4 @@
+0 Atelectasis
+1 Effusion
+2 Mass
+3 Nodule
