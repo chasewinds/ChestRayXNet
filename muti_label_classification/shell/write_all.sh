@@ -2,7 +2,7 @@
 export CUDA_VISIBLE_DEVICES=0
 
 python code/14muti_tfrecord.py \
-    --dataset_dir '/comvol/nfs/datasets/medicine/NIH-CXR8/images' \
+    --dataset_dir '/home/rubans/dataset' \
     --write_dir 'data/tfrecord/all' \
     --train_list 'data/list/all/train.txt' \
     --val_list 'data/list/all/val.txt' \
