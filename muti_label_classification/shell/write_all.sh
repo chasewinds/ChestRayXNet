@@ -2,7 +2,7 @@
 export CUDA_VISIBLE_DEVICES=0
 
 python code/14muti_tfrecord.py \
-    --dataset_dir '/home/rubans/dataset' \
+    --dataset_dir '/home/rubans/dataset/images' \
     --write_dir 'data/tfrecord/all' \
     --train_list 'data/list/all/train.txt' \
     --val_list 'data/list/all/val.txt' \
