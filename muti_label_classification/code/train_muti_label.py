@@ -180,7 +180,7 @@ def run():
                     auc.append(roc_auc_score(sub_label, sub_prob))
                 except:
                     continue
-            epoch = global_step / num_batches_per_epoch + 1
+            # epoch = global_step / num_batches_per_epoch + 1
             logging.info(' Epoch: %s, global step %s: learning rate: %s, accuracy: %s , loss: %.4f, (%.2f sec/step)', epoch, global_step_count, learning_rate, accuracy_value, total_loss, time_elapsed)
             # logging.info('the loss before get total is : %s' % loss)
 
