@@ -7,7 +7,7 @@ from tensorflow.python.platform import tf_logging as logging
 
 from sklearn.metrics import roc_auc_score
 import inception_preprocessing
-import mlog
+# import mlog
 from data_prepare import get_split, load_batch
 from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_scope
 from custlearningrate import CustLearningRate
@@ -109,30 +109,30 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        # decay_steps = int(FLAGS.step_size * num_batches_per_epoch)
+        decay_steps = int(FLAGS.step_size * num_batches_per_epoch)
         # Define your exponentially decaying learning rate
 
-        # lr = tf.train.exponential_decay(
-        #     learning_rate=FLAGS.learning_rate,
-        #     global_step=global_step,
-        #     decay_steps=decay_steps,
-        #     decay_rate=FLAGS.lr_decay_factor,
-        #     staircase=True)
+        lr = tf.train.exponential_decay(
+            learning_rate=FLAGS.learning_rate,
+            global_step=global_step,
+            decay_steps=decay_steps,
+            decay_rate=FLAGS.lr_decay_factor,
+            staircase=True)
         # epochs_lr = [
         #              [20, 0.001],
         #              [20, 0.0006],
         #              [20, 0.0001],
         #              [20, 0.00006],
         #              [20, 0.00001]]
-        epochs_lr = [
-            [10, 0.001],
-            [10, 0.0006],
-            [10, 0.0001],
-            [10, 0.00006],
-            [10, 0.00001]]
-        lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
-                                                   global_step=global_step,
-                                                   steps_per_epoch=num_batches_per_epoch)
+        # epochs_lr = [
+        #     [10, 0.001],
+        #     [10, 0.0006],
+        #     [10, 0.0001],
+        #     [10, 0.00006],
+        #     [10, 0.00001]]
+        # lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
+        #                                            global_step=global_step,
+        #                                            steps_per_epoch=num_batches_per_epoch)
 
         # Now we can define the optimizer that takes on the learning rate
         optimizer = tf.train.AdamOptimizer(learning_rate=lr)
@@ -180,9 +180,10 @@ def run():
                     auc.append(roc_auc_score(sub_label, sub_prob))
                 except:
                     continue
-            logging.info('global step %s: learning rate: %s, accuracy: %s , loss: %.4f, auc : %s (%.2f sec/step)', global_step_count, learning_rate, accuracy_value, total_loss, auc, time_elapsed)
+            logging.info('global step %s: learning rate: %s, accuracy: %s , loss: %.4f, (%.2f sec/step)', global_step_count, learning_rate, accuracy_value, total_loss, time_elapsed)
             # logging.info('the loss before get total is : %s' % loss)
-            return total_loss, global_step_count, accuracy_value, learning_rate, my_summary_op
+
+            return total_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
 
         def val_step(sess, validation_loss, validation_accuracy, val_label, val_probability):
             loss_value, accuracy_value, label, prob_value = sess.run([validation_loss, validation_accuracy, val_label, val_probability])
@@ -209,8 +210,10 @@ def run():
             epoch_loss = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 ## run a train step
-                loss, global_step_count, accuracy_value, learning_rate, my_summary_ops = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, prob)
+                loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, prob)
                 epoch_loss.append(loss)
+                if step % 10 == 0:
+                    logging.info("AUC on the last batch is : %s" % auc)
                 #At the start of every epoch, show the vital information:
                 if step % num_batches_per_epoch == 0:
                     # logging
@@ -243,5 +246,5 @@ def run():
             sv.saver.save(sess, sv.save_path, global_step = sv.global_step)
 
 if __name__ == '__main__':
-    mlog.initlog(FLAGS.log_dir)
+    # mlog.initlog(FLAGS.log_dir)
     run()
