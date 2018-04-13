@@ -7,7 +7,7 @@ python code/eval_inception.py \
     --dataset_dir 'data/tfrecord/all' \
     --auc_picture_path 'eval/auc_path/auc.png' \
     --tfrecord_prefix 'chest14_all' \
-    --batch_size 16 \
+    --batch_size 32 \
     --num_epochs 1 \
     --num_classes 14 \
     --ckpt_id 1
