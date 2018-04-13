@@ -95,12 +95,7 @@ def run():
         # Define the scopes that you want to exclude for restoration
         exclude = ['densenet161/Logits', 'densenet161/final_block']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
-        """
-        first auc for dense161 in earlier 26 epoch:
-        The auc of each class is as fellow:
-        [0.63520693651405791, 0.63710852720260935, 0.65156066467040386, 0.60359253095505239, 0.51762399936986558,
-        0.4967026033329211, 0.59554476355082875, 0.5342352796204638, 0.69370695676663519, 0.8078309113155997,
-        0.55810731640410682, 0.60321180925870621, 0.49445176619876041, 0.46183772550485502]"""
+
         ## convert into probabilities
         probabilities = tf.sigmoid(logits)
        ## new loss, just equal to the sum of 14 log loss
@@ -134,10 +129,10 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[20, 0.0001],
-                     [30, 0.00001],
+        epochs_lr = [[5, 0.001],
+                     [30, 0.0001],
                      [50, 0.00001],
-                     [100, 0.0000006]]
+                     [100, 0.000006]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
