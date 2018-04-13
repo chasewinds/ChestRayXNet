@@ -213,9 +213,9 @@ def preprocess_for_train(image, height, width,
     # in chest x ray dataset, the total mean and std is as fellow:
     # total_mean = tf.constant([126.973])
     # std = tf.constant([66.0])
-    distorted_image = tf.subtract(distorted_image, total_mean)
-    distorted_image = tf.div(distorted_image, std)
-    return distorted_image
+    image = tf.subtract(image, total_mean)
+    image = tf.div(image, std)
+    return image
 
 
 def preprocess_for_eval(image, height, width,
