@@ -190,7 +190,7 @@ def run():
             #Run the logging to print some results
             #logging.info("prob output from the network is : %s, label is : %s, loss from log_loss function is : %s" % (auc_prob, auc_label, log_loss))
             out_prob = [0 if y < 0.5 else 1 for x in auc_prob for y in x]
-            logging.info("DEBUG: sigmoid logits is : %s" % out_prob[0])
+            # logging.info("DEBUG: sigmoid logits is : %s" % out_prob[0])
             auc = []
             for i in range(FLAGS.num_classes):
                 sub_prob = [x[i] for x in auc_prob]
