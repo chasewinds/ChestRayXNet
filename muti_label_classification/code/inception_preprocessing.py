@@ -280,9 +280,9 @@ def preprocess_for_eval(image, height, width,
       image = tf.squeeze(image, [0])
     total_mean = tf.constant([118.380948])
     std = tf.constant([61.896913])
-    distorted_image = tf.subtract(distorted_image, total_mean)
-    distorted_image = tf.div(distorted_image, std)
-    return distorted_image
+    image = tf.subtract(image, total_mean)
+    image = tf.div(image, std)
+    return image
 
 
 def preprocess_image(image, height, width,
