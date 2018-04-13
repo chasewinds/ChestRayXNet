@@ -134,8 +134,8 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[30, 0.0003],
-                     [30, 0.0001],
+        epochs_lr = [[20, 0.0001],
+                     [30, 0.00001],
                      [50, 0.00001],
                      [100, 0.0000006]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
@@ -262,6 +262,7 @@ def run():
 
                 # Log the summaries every 10 step.
                 if step % 10 == 0:
+                    auc_train = [0] * FLAGS.num_classes
                     logging.info('AUC value on the last batch is : %s' % auc)
                     summaries = sess.run(my_summary_ops)
                     sv.summary_computed(sess, summaries)
