@@ -75,16 +75,16 @@ def plot_roc(pred, label, auc_picture_path):
     logging.info("-----------------the ture positive ratio is: , shape %s" % (len(tpr)))
     logging.info("-----------------the auc which used as label is: %s" % auc)
 
-    plt.plot(fpr, tpr, color='red', label=("auc: %f" % auc))
-    plt.plot([0, 1], [0, 1], color='blue', linewidth=2, linestyle='--')
-    plt.title('Classification Test on X-Chest: %s' % 'positive VS negative')
-    plt.legend(loc='lower right')
-    if len(auc_picture_path) > 0:
-        logging.info('be about to save')
-        plt.savefig(auc_picture_path)
+    # plt.plot(fpr, tpr, color='red', label=("auc: %f" % auc))
+    # plt.plot([0, 1], [0, 1], color='blue', linewidth=2, linestyle='--')
+    # plt.title('Classification Test on X-Chest: %s' % 'positive VS negative')
+    # plt.legend(loc='lower right')
+    # if len(auc_picture_path) > 0:
+    #     logging.info('be about to save')
+    #     plt.savefig(auc_picture_path)
 
     # plt.show()
-    plt.close()
+    # plt.close()
     return auc
 
 def parse_label(pred, label, index):
