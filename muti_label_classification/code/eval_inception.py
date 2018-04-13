@@ -273,7 +273,7 @@ def run():
             # total_pred = [item for sub in pred_all for item in sub]
             # total_label = [item for sub in label_all for item in sub]
             auc_metrics = []
-            for i in range(FLAGS.num_classes):
+            for i in range(FLAGS.num_classes / 10):
                 roc_save_path = FLAGS.auc_picture_path.split('.')[0] + str(i) + '.png'
                 parsed_pred, parsed_label = parse_label(pred_all, label_all, i)
                 # logging.info('the parsed predict is : %s, len is : %s' % (parsed_pred, len(parsed_pred)))
