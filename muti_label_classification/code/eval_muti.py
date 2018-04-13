@@ -8,7 +8,7 @@ from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_sco
 from densenet import densenet161, densenet_arg_scope
 import time
 import os
-import mlog
+# import mlog
 from data_prepare import load_batch, get_split
 import numpy as np
 from sklearn.metrics import roc_auc_score, roc_curve
@@ -75,15 +75,15 @@ def plot_roc(pred, label, auc_picture_path):
     logging.info("-----------------the ture positive ratio is: , shape %s" % (len(tpr)))
     logging.info("-----------------the auc which used as label is: %s" % auc)
 
-    plt.plot(fpr, tpr, color='red', label=("auc: %f" % auc))
-    plt.plot([0, 1], [0, 1], color='blue', linewidth=2, linestyle='--')
-    plt.title('Classification Test on X-Chest: %s' % 'positive VS negative')
-    plt.legend(loc='lower right')
-    if len(auc_picture_path) > 0:
-        logging.info('be about to save')
-        plt.savefig(auc_picture_path)
+    # plt.plot(fpr, tpr, color='red', label=("auc: %f" % auc))
+    # plt.plot([0, 1], [0, 1], color='blue', linewidth=2, linestyle='--')
+    # plt.title('Classification Test on X-Chest: %s' % 'positive VS negative')
+    # plt.legend(loc='lower right')
+    # if len(auc_picture_path) > 0:
+    #     logging.info('be about to save')
+    #     plt.savefig(auc_picture_path)
 
-    plt.show()
+    # plt.show()
     plt.close()
     return auc
 
