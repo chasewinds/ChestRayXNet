@@ -232,11 +232,11 @@ def preprocess_for_train(image, height, width, bbox,
     # distorted_image = tf.subtract(distorted_image, 0.5)
     # distorted_image = tf.multiply(distorted_image, 2.0)
     # in imagenet the total mean and std is as fellow:
-    # total_mean = tf.constant([118.380948])
-    # std = tf.constant([61.896913])
+    total_mean = tf.constant([118.380948])
+    std = tf.constant([61.896913])
     # in chest x ray dataset, the total mean and std is as fellow:
-    total_mean = tf.constant([126.973])
-    std = tf.constant([66.0])
+    # total_mean = tf.constant([126.973])
+    # std = tf.constant([66.0])
     distorted_image = tf.subtract(distorted_image, total_mean)
     distorted_image = tf.div(distorted_image, std)
     return distorted_image
@@ -278,9 +278,11 @@ def preprocess_for_eval(image, height, width,
       image = tf.image.resize_bilinear(image, [height, width],
                                        align_corners=False)
       image = tf.squeeze(image, [0])
-    image = tf.subtract(image, 0.5)
-    image = tf.multiply(image, 2.0)
-    return image
+    total_mean = tf.constant([118.380948])
+    std = tf.constant([61.896913])
+    distorted_image = tf.subtract(distorted_image, total_mean)
+    distorted_image = tf.div(distorted_image, std)
+    return distorted_image
 
 
 def preprocess_image(image, height, width,
