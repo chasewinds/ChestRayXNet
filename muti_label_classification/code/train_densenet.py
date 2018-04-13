@@ -134,9 +134,9 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[30, 0.00003],
-                     [30, 0.00001],
-                     [50, 0.000001],
+        epochs_lr = [[30, 0.0003],
+                     [30, 0.0001],
+                     [50, 0.00001],
                      [100, 0.0000006]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
