@@ -28,7 +28,7 @@ import tensorflow as tf
 slim = tf.contrib.slim
 
 
-def block35(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
+def block35(net, scale=1.0, activation_fn=tf.nn.elu, scope=None, reuse=None):
   """Builds the 35x35 resnet block."""
   with tf.variable_scope(scope, 'Block35', [net], reuse=reuse):
     with tf.variable_scope('Branch_0'):
@@ -41,7 +41,7 @@ def block35(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
       tower_conv2_1 = slim.conv2d(tower_conv2_0, 48, 3, activation_fn=tf.nn.elu, scope='Conv2d_0b_3x3')
       tower_conv2_2 = slim.conv2d(tower_conv2_1, 64, 3, activation_fn=tf.nn.elu, scope='Conv2d_0c_3x3')
     mixed = tf.concat(axis=3, values=[tower_conv, tower_conv1_1, tower_conv2_2])
-    up = slim.conv2d(mixed, net.get_shape()[3], 1, activation_fn=tf.nn.elu, normalizer_fn=None,
+    up = slim.conv2d(mixed, net.get_shape()[3], 1, normalizer_fn=None,
                      activation_fn=None, scope='Conv2d_1x1')
     net += scale * up
     if activation_fn:
@@ -49,7 +49,7 @@ def block35(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
   return net
 
 
-def block17(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
+def block17(net, scale=1.0, activation_fn=tf.nn.elu, scope=None, reuse=None):
   """Builds the 17x17 resnet block."""
   with tf.variable_scope(scope, 'Block17', [net], reuse=reuse):
     with tf.variable_scope('Branch_0'):
@@ -268,7 +268,7 @@ def inception_resnet_v2_arg_scope(weight_decay=0.00004,
         'epsilon': batch_norm_epsilon,
     }
     # Set activation_fn and parameters for batch_norm.
-    with slim.arg_scope([slim.conv2d], activation_fn=tf.nn.relu,
+    with slim.arg_scope([slim.conv2d], activation_fn=tf.nn.elu,
                         normalizer_fn=slim.batch_norm,
                         normalizer_params=batch_norm_params) as scope:
       return scope
