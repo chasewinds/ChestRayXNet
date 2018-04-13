@@ -163,13 +163,13 @@ def run():
         my_summary_op = tf.summary.merge_all()
 
         #Now we need to create a training step function that runs both the train_op, metrics_op and updates the global_step concurrently.
-        def train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_label, probability):
+        def train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_label, probability, pred_debug):
             '''
             Simply runs a session for the three arguments provided and gives a logging on the time elapsed for each global step
             '''
             # Check the time for each sess run
             start_time = time.time()
-            total_loss, global_step_count, accuracy_value, learning_rate, auc_label, auc_prob = sess.run([train_op, global_step, accuracy, lr, train_label, probability])
+            total_loss, global_step_count, accuracy_value, learning_rate, auc_label, auc_prob, pred = sess.run([train_op, global_step, accuracy, lr, train_label, probability, pred_debug])
             time_elapsed = time.time() - start_time
             #Run the logging to print some results
             auc = []
@@ -180,7 +180,7 @@ def run():
                     auc.append(roc_auc_score(sub_label, sub_prob))
                 except:
                     continue
-            # epoch = global_step / num_batches_per_epoch + 1
+            logging.info("Debug the pred: %s" % pred)
             logging.info('global step %s: learning rate: %s, accuracy: %s , loss: %.4f, (%.2f sec/step)',global_step_count, learning_rate, accuracy_value, total_loss, time_elapsed)
             # logging.info('the loss before get total is : %s' % loss)
 
@@ -211,7 +211,7 @@ def run():
             epoch_loss = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 ## run a train step
-                loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, prob)
+                loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, prob, lesion_pred)
                 epoch_loss.append(loss)
                 if step % 10 == 0:
                     logging.info("AUC on the last batch is : %s" % auc)
