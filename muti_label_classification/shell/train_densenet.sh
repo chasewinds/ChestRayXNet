@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=0
 
 python code/train_densenet.py \
     --image_set_dir '/comvol/nfs/datasets/medicine/NIH-CXR8/images' \
