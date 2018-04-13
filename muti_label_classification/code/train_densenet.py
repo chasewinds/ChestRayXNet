@@ -9,7 +9,7 @@ from sklearn.metrics import roc_auc_score
 import inception_preprocessing
 # import mlog
 from data_prepare import get_split, load_batch
-from densenet import densenet161, densenet_arg_scope
+from densenet_elu import densenet161, densenet_arg_scope
 from custlearningrate import CustLearningRate
 slim = tf.contrib.slim
 
@@ -129,7 +129,7 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[5, 0.001],
+        epochs_lr = [[20, 0.001],
                      [30, 0.0001],
                      [50, 0.00001],
                      [100, 0.000006]]
