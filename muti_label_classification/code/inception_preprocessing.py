@@ -317,6 +317,6 @@ def preprocess_image(image, height, width,
   """
   # image = tf.image.resize_image_with_crop_or_pad(image, height, width)
   if is_training:
-    return preprocess_for_train(image, height, width, bbox, fast_mode)
+    return preprocess_for_train(image, height, width, fast_mode)
   else:
     return preprocess_for_eval(image, height, width)
