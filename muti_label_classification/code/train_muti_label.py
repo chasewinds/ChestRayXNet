@@ -180,7 +180,7 @@ def run():
                     auc.append(roc_auc_score(sub_label, sub_prob))
                 except:
                     continue
-            logging.info("Debug the pred: %s" % pred)
+            # logging.info("Debug the pred: %s" % pred)
             logging.info('global step %s: learning rate: %s, accuracy: %s , loss: %.4f, (%.2f sec/step)',global_step_count, learning_rate, accuracy_value, total_loss, time_elapsed)
             # logging.info('the loss before get total is : %s' % loss)
 
