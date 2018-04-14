@@ -149,8 +149,8 @@ def densenet(inputs,
       #                   biases_initializer=tf.zeros_initializer(),
       #                   scope='logits')
       net = slim.flatten(net)
-      if fc_dropout_rate:
-        net = slim.dropout(net, fc_dropout_rate, is_training=is_training, scope='Dropout')
+      # if fc_dropout_rate:
+      #   net = slim.dropout(net, fc_dropout_rate, is_training=is_training, scope='Dropout')
       logits = slim.fully_connected(net, num_classes, activation_fn=None,
                                     scope='Logits')
 
