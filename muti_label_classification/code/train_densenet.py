@@ -99,7 +99,8 @@ def run():
         ## convert into probabilities
         probabilities = tf.sigmoid(logits)
        ## new loss, just equal to the sum of 14 log loss
-        loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
+        # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
+        loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
         #l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])
         # # tf.Print(loss, ["l2_loss: ", l2_loss])
         #loss = log_loss + l2_loss * FLAGS.weight_decay
@@ -152,7 +153,8 @@ def run():
         val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
-        val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
+        # val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
+        val_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
         val_lesion_pred = tf.cast(tf.greater_equal(val_probabilities, 0.5), tf.float32)
         val_accuracy = tf.reduce_mean(tf.cast(tf.equal(val_lesion_pred, val_labels), tf.float32))
             # return loss, accuracy
