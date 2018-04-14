@@ -9,7 +9,7 @@ from sklearn.metrics import roc_auc_score
 import inception_preprocessing
 # import mlog
 from data_prepare import get_split, load_batch
-from densenet_elu import densenet161, densenet_arg_scope
+from densenet_elu import densenet121, densenet161, densenet_arg_scope
 from custlearningrate import CustLearningRate
 slim = tf.contrib.slim
 
@@ -32,6 +32,8 @@ flags.DEFINE_string('tfrecord_prefix', None, 'String, The prefix of your tfrecor
 flags.DEFINE_string('log_dir', None, 'String, The dirctory where the training log be saved at')
 
 flags.DEFINE_string('image_label_list', None, 'String, the list which save all your image and lable be used in training and validation')
+
+flags.DEFINE_string('model_type', None, 'String, select network for training and validation')
 
 flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')
 
@@ -87,12 +89,29 @@ def run():
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
         val_num_batches_per_epoch = (val_num_samples - 1) / FLAGS.batch_size + 1
 
-        with slim.arg_scope(densenet_arg_scope()):
-            logits, _ = densenet161(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
+        # def run_one_batch(model_name, save_exclude=Flase):
+        #     with slim.arg_scope(densenet_arg_scope()):
+        #         logits, _ = model_name(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
 
-        # Define the scopes that you want to exclude for restoration
-        exclude = ['densenet161/Logits', 'densenet161/final_block']
-        variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
+        #     # Define the scopes that you want to exclude for restoration
+        #     exclude = ['densenet161/Logits', 'densenet161/final_block']
+        #     variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
+
+        if FLAGS.model_type == 'densenet161':
+            with slim.arg_scope(densenet_arg_scope()):
+                logits, _ = densenet161(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
+
+            # Define the scopes that you want to exclude for restoration
+            exclude = ['densenet161/Logits', 'densenet161/final_block']
+            variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
+        elif FLAGS.model_type == 'densenet121':
+            with slim.arg_scope(densenet_arg_scope()):
+                logits, _ = densenet121(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
+
+            # Define the scopes that you want to exclude for restoration
+            exclude = ['densenet121/Logits', 'densenet121/final_block']
+            variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
+
 
         ## convert into probabilities
         probabilities = tf.sigmoid(logits)
@@ -137,8 +156,13 @@ def run():
         # auc, _ = tf.metrics.auc(train_labels, probabilities)
 
         # def val_graph(images, labels):
-        with slim.arg_scope(densenet_arg_scope()):
-            val_logits, _ = densenet161(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
+        if FLAGS.model_type == 'densenet161':
+            with slim.arg_scope(densenet_arg_scope()):
+                val_logits, _ = densenet161(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
+        elif FLAGS.model_type == 'densenet121':
+            with slim.arg_scope(densenet_arg_scope()):
+                val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
+                
         val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
