@@ -253,8 +253,8 @@ def run():
                         # logging.info('AUC on validaton batch %s is : %s' % (i, auc))
                         for idx in range(len(auc)):
                             auc_arr[idx] += auc[idx]
-                    logging.info('Mean loss on this validation epoch is: %s' % (float(sum(sum(val_loss_arr))) / max(len(len(val_loss_arr)), 1)))
-                    logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(sum(val_acc_arr))) / max(len(len(val_acc_arr)), 1)))
+                    # logging.info('Mean loss on this validation epoch is: %s' % (float(sum(sum(val_loss_arr))) / max(len(len(val_loss_arr)), 1)))
+                    # logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(sum(val_acc_arr))) / max(len(len(val_acc_arr)), 1)))
                     mean_auc = [auc / val_num_batches_per_epoch for auc in auc_arr]
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
 
