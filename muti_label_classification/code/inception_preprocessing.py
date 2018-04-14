@@ -193,7 +193,7 @@ def preprocess_for_train(image, height, width, fast_mode=True, scope=None):
 
     # Randomly flip the image horizontally.
     distorted_image = tf.image.random_flip_left_right(image)
-    # the mean and std of ImageNet is as fellow；
+    # the mean and std of ImageNet is as fellow:
     total_mean = tf.constant([118.380948])
     std = tf.constant([61.896913])
     # in chest x ray dataset, the total mean and std is as fellow:
