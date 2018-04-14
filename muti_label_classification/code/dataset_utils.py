@@ -40,55 +40,6 @@ def image_to_tfexample(image_data, image_format, height, width, class_id):
       'image/height': int64_feature(height),
       'image/width': int64_feature(width),
   }))
-#
-# def write_label_file(labels_to_class_names, dataset_dir,
-#                      filename=LABELS_FILENAME):
-#   """Writes a file with the list of class names.
-#   Args:
-#     labels_to_class_names: A map of (integer) labels to class names.
-#     dataset_dir: The directory in which the labels file should be written.
-#     filename: The filename where the class names are written.
-#   """
-#   labels_filename = os.path.join(dataset_dir, filename)
-#   with tf.gfile.Open(labels_filename, 'w') as f:
-#     for label in labels_to_class_names:
-#       class_name = labels_to_class_names[label]
-#       f.write('%d:%s\n' % (label, class_name))
-#
-# def write_label_image_list(image_to_label, dataset_dir, filename=total_image_label_file):
-
-
-#
-# def has_labels(dataset_dir, filename=LABELS_FILENAME):
-#   """Specifies whether or not the dataset directory contains a label map file.
-#   Args:
-#     dataset_dir: The directory in which the labels file is found.
-#     filename: The filename where the class names are written.
-#   Returns:
-#     `True` if the labels file exists and `False` otherwise.
-#   """
-#   return tf.gfile.Exists(os.path.join(dataset_dir, filename))
-
-#
-# def read_label_file(dataset_dir, filename=LABELS_FILENAME):
-#   """Reads the labels file and returns a mapping from ID to class name.
-#   Args:
-#     dataset_dir: The directory in which the labels file is found.
-#     filename: The filename where the class names are written.
-#   Returns:
-#     A map from a label (integer) to class name.
-#   """
-#   labels_filename = os.path.join(dataset_dir, filename)
-#   with tf.gfile.Open(labels_filename, 'r') as f:
-#     lines = f.read().decode()
-#   lines = lines.split('\n')
-#   lines = filter(None, lines)
-#
-#   labels_to_class_names = {}
-#   for line in lines:
-#     index = line.index(':')
-#     labels_to_class_names[int(line[:index])] = line[index+1:]
-#   return labels_to_class_names
 
 def read_label_file(dataset_dir, filename):
     labels_to_class_names = {}
@@ -119,40 +70,6 @@ class ImageReader(object):
     # assert len(image.shape) == 3
     # assert image.shape[2] == 3
     return image
-
-#
-# def _get_filenames_and_classes(dataset_dir):
-#   """Returns a list of filenames and inferred class names.
-#   Args:
-#     dataset_dir: A directory containing a set of subdirectories representing
-#       class names. Each subdirectory should contain PNG or JPG encoded images.
-#   Returns:
-#     A list of image file paths, relative to `dataset_dir` and the list of
-#     subdirectories, representing class names.
-#   """
-#   # print 'DATASET DIR:', dataset_dir
-#   # print 'subdir:', [name for name in os.listdir(dataset_dir)]
-#   # dataset_main_folder_list = []
-#   # for name in os.listdir(dataset_dir):
-#   # 	if os.path.isdir(name):
-#   # 		dataset_main_folder_list.append(name)
-#   dataset_main_folder_list = [name for name in os.listdir(dataset_dir) if os.path.isdir(os.path.join(dataset_dir, name))]
-#   dataset_root = os.path.join(dataset_dir, dataset_main_folder_list[0])
-#   directories = []
-#   class_names = []
-#   for filename in os.listdir(dataset_root):
-#     path = os.path.join(dataset_root, filename)
-#     if os.path.isdir(path):
-#       directories.append(path)
-#       class_names.append(filename)
-#
-#   photo_filenames = []
-#   for directory in directories:
-#     for filename in os.listdir(directory):
-#       path = os.path.join(directory, filename)
-#       photo_filenames.append(path)
-#
-#   return photo_filenames, sorted(class_names)
 
 def _get_image_label(labels_to_class_names_dict):
     image_path = []
