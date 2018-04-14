@@ -7,7 +7,7 @@ from tensorflow.python.platform import tf_logging as logging
 
 from sklearn.metrics import roc_auc_score, roc_curve
 import inception_preprocessing
-import mlog
+# import mlog
 from dataset_utils import read_label_file
 from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_scope
 
@@ -126,7 +126,7 @@ def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_train
     #As for the raw images, we just do a simple reshape to batch it up
     raw_image = tf.expand_dims(raw_image, 0)
     raw_image = tf.image.resize_nearest_neighbor(raw_image, [height, width])
-    tf.Print(raw_image, [raw_image])
+    # tf.Print(raw_image, [raw_image])
     raw_image = tf.squeeze(raw_image)
 
     #Batch up the image by enqueing the tensors internally in a FIFO queue and dequeueing many elements with tf.train.batch.
