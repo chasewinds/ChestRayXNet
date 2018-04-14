@@ -5,7 +5,7 @@ python code/train_densenet.py \
     --image_set_dir '/home/rubans/dataset/images' \
     --tfrecord_dir 'data/tfrecord/all' \
     --tfrecord_prefix 'chest14_all' \
-    --log_dir 'log/densenet' \
+    --log_dir 'log/dense161_elu_30epoch' \
     --image_label_list 'data/list/14muti/label_lesion.txt' \
     --checkpoint_file 'model/densenet/tf-densenet161.ckpt' \
     --num_classes 14 \
