@@ -70,9 +70,7 @@ def run():
     #Now we start to construct the graph and build our model
     with tf.Graph().as_default() as graph:
         tf.logging.set_verbosity(tf.logging.INFO) #Set the verbosity to INFO level
-
         # #First create the dataset and load one batch
-
         def load_batch_from_tfrecord(split_name, dataset_dir=FLAGS.tfrecord_dir, num_classes=FLAGS.num_classes,
                                      file_pattern_for_counting=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size):
             is_training = True if split_name == 'train' else False
@@ -102,16 +100,6 @@ def run():
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
         loss = tf.reduce_mean(loss)
-        #l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])
-        # # tf.Print(loss, ["l2_loss: ", l2_loss])
-        #loss = log_loss + l2_loss * FLAGS.weight_decay
-        """
-        losses = -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
-        losses = -labels * log(pred + eps) - (1 - labels) * (1 - pred + eps)
-        """
-        # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])
-        # loss = bais_loss + l2_loss * 1e-5
-        # total_loss = tf.losses.get_total_loss()  # obtain the regularization losses as well
 
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
@@ -218,9 +206,6 @@ def run():
                     continue
             return loss_value, accuracy_value, auc
 
-        # # Define the scopes that you want to exclude for restoration
-        # exclude = ['densenet121/logits', 'densenet121/final_block']
-        # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
         # # Now we create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
 
