@@ -142,7 +142,8 @@ def run():
         lesion_pred = tf.cast(tf.greater_equal(sigmoid_op, 0.5), dtype=tf.float32)
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, labels), tf.float32))
 
-        loss = tf.losses.log_loss(labels, sigmoid_op)
+        # loss = tf.losses.log_loss(labels, sigmoid_op)
+        loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits))
 
         #Create the global step and an increment op for monitoring
         global_step = get_or_create_global_step()
