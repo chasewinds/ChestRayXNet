@@ -101,6 +101,7 @@ def run():
        ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
+        loss = tf.reduce_sum(loss, axis=1)
         #l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])
         # # tf.Print(loss, ["l2_loss: ", l2_loss])
         #loss = log_loss + l2_loss * FLAGS.weight_decay
@@ -130,7 +131,7 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[5, 0.001],
+        epochs_lr = [[10, 0.001],
                      [10, 0.0006],
                      [30, 0.0001],
                      [50, 0.00001]]
@@ -155,18 +156,20 @@ def run():
         ## new loss, just equal to the sum of 14 log loss
         # val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
         val_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
+        val_loss = tf.reduce_sum(val_loss, axis=1)
+
         val_lesion_pred = tf.cast(tf.greater_equal(val_probabilities, 0.5), tf.float32)
         val_accuracy = tf.reduce_mean(tf.cast(tf.equal(val_lesion_pred, val_labels), tf.float32))
             # return loss, accuracy
 
         # Now finally create all the summaries you need to monitor and group them into one summary op.
-        # tf.summary.scalar('losses/Total_Loss', loss)
-        # tf.summary.scalar('accuracy', accuracy)
+        tf.summary.scalar('losses/Total_Loss', loss)
+        tf.summary.scalar('accuracy', accuracy)
         # tf.summary.scalar('auc', auc)
         tf.summary.scalar('learning_rate', lr)
-        # tf.summary.scalar('epoch', )
-        # tf.summary.scalar('val_losses', val_loss)
-        # tf.summary.scalar('val_accuracy', val_accuracy)
+        tf.summary.scalar('epoch', )
+        tf.summary.scalar('val_losses', val_loss)
+        tf.summary.scalar('val_accuracy', val_accuracy)
         my_summary_op = tf.summary.merge_all()
 
 
@@ -197,8 +200,8 @@ def run():
                 except:
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
-            logging.info('Epoch: %s, global step %s: learning rate: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, accuracy_value, time_elapsed)
-            logging.info("the loss in this step is : %s" % str(int(sum(sum(log_loss))) / 14.0))
+            logging.info('Epoch: %s, global step %s: learning rate: %s, LOSS: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, log_loss, accuracy_value, time_elapsed)
+            # logging.info("the loss in this step is : %s" % str(int(sum(sum(log_loss))) / 14.0))
             return log_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
 
         def val_step(sess, validation_loss, validation_accuracy, val_label, val_probability):
@@ -238,7 +241,7 @@ def run():
                     logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # learning_rate_value, accuracy_value, auc_value = sess.run([accuracy, auc])
                     logging.info('Current Learning Rate: %s', learning_rate)
-                    # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
+                    logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
                     epoch_loss[:] = []
                     logging.info('Accuracy in this training epoch is : %s', accuracy_value)
                     val_loss_arr = []
@@ -253,8 +256,8 @@ def run():
                         # logging.info('AUC on validaton batch %s is : %s' % (i, auc))
                         for idx in range(len(auc)):
                             auc_arr[idx] += auc[idx]
-                    # logging.info('Mean loss on this validation epoch is: %s' % (float(sum(sum(val_loss_arr))) / max(len(len(val_loss_arr)), 1)))
-                    # logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(sum(val_acc_arr))) / max(len(len(val_acc_arr)), 1)))
+                    logging.info('Mean loss on this validation epoch is: %s' % (float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)))
+                    logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(val_acc_arr)) / max(len(val_acc_arr), 1)))
                     mean_auc = [auc / val_num_batches_per_epoch for auc in auc_arr]
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
 
@@ -262,9 +265,9 @@ def run():
                 if step % 10 == 0:
                     auc_train = [0] * FLAGS.num_classes
                     logging.info('AUC value on the last batch is : %s' % auc)
-                    logging.info('The 14 subclass loss on the last batch is : %s' % sum(batch_loss))
+                    # logging.info('The 14 subclass loss on the last batch is : %s' % sum(batch_loss))
                     summaries = sess.run(my_summary_ops)
-                    # sv.summary_computed(sess, summaries)
+                    sv.summary_computed(sess, summaries)
 
             #Once all the training has been done, save the log files and checkpoint model
             logging.info('Finished training! Saving model to disk now.')
