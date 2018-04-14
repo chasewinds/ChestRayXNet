@@ -198,7 +198,7 @@ def run():
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
             logging.info('Epoch: %s, global step %s: learning rate: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, accuracy_value, time_elapsed)
-            logging.info("the loss in this step is : %s" % sum(sum(log_loss)) / 14) 
+            logging.info("the loss in this step is : %s" % int(sum(sum(log_loss))) / 14) 
             return log_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
 
         def val_step(sess, validation_loss, validation_accuracy, val_label, val_probability):
