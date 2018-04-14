@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow.python.platform import tf_logging as logging
 from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
 from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_scope
-from densenet import densenet161, densenet_arg_scope
+from densenet_elu import densenet161, densenet_arg_scope
 import time
 import os
 # import mlog
