@@ -138,10 +138,10 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[10, 0.001],
-                     [10, 0.0006],
-                     [30, 0.0001],
-                     [50, 0.00001]]
+        epochs_lr = [[20, 0.001],
+                     [20, 0.0006],
+                     [20, 0.0001],
+                     [20, 0.00001]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
@@ -162,7 +162,7 @@ def run():
         elif FLAGS.model_type == 'densenet121':
             with slim.arg_scope(densenet_arg_scope()):
                 val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
-                
+
         val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
