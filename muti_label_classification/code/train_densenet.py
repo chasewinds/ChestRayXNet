@@ -163,11 +163,11 @@ def run():
         # tf.summary.scalar('losses/Total_Loss', loss)
         # tf.summary.scalar('accuracy', accuracy)
         # tf.summary.scalar('auc', auc)
-        # tf.summary.scalar('learning_rate', lr)
+        tf.summary.scalar('learning_rate', lr)
         # tf.summary.scalar('epoch', )
         # tf.summary.scalar('val_losses', val_loss)
         # tf.summary.scalar('val_accuracy', val_accuracy)
-        # my_summary_op = tf.summary.merge_all()
+        my_summary_op = tf.summary.merge_all()
 
 
         #Now we need to create a training step function that runs both the train_op, metrics_op and updates the global_step concurrently.
