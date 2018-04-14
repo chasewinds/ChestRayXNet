@@ -8,7 +8,6 @@ from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_sco
 from densenet_elu import densenet161, densenet_arg_scope
 import time
 import os
-# import mlog
 from data_prepare import load_batch, get_split
 import numpy as np
 from sklearn.metrics import roc_auc_score, roc_curve
@@ -71,9 +70,9 @@ def plot_roc(pred, label, auc_picture_path):
     acc_thres, acc = calc_max_acc(scores[:, 0], scores[:, 1], thresholds)
     logging.info("accuracy: %f, threshold: %f" % (acc, acc_thres))
 
-    logging.info("-----------------the false positive ratio is: , shape %s" % (len(fpr)))
-    logging.info("-----------------the ture positive ratio is: , shape %s" % (len(tpr)))
-    logging.info("-----------------the auc which used as label is: %s" % auc)
+    # logging.info("-----------------the false positive ratio is: , shape %s" % (len(fpr)))
+    # logging.info("-----------------the ture positive ratio is: , shape %s" % (len(tpr)))
+    # logging.info("-----------------the auc which used as label is: %s" % auc)
 
     # plt.plot(fpr, tpr, color='red', label=("auc: %f" % auc))
     # plt.plot([0, 1], [0, 1], color='blue', linewidth=2, linestyle='--')
@@ -98,7 +97,6 @@ def require_ckpt_file(log_dir=FLAGS.log_dir, ckpt_id=FLAGS.ckpt_id):
     return os.path.join(FLAGS.log_dir ,ckpt_list[len(ckpt_list) - ckpt_id])
 
 def run():
-
     # Get the latest checkpoint file
     checkpoint_file = tf.train.latest_checkpoint(FLAGS.log_dir)
 
@@ -115,7 +113,7 @@ def run():
         #Get the dataset first and load one batch of validation images and labels tensors. Set is_training as False so as to use the evaluation preprocessing
         file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
         dataset = get_split('validation', FLAGS.dataset_dir, FLAGS.num_classes, file_pattern, FLAGS.tfrecord_prefix)
-        images, raw_images, labels = load_batch(dataset, batch_size=FLAGS.batch_size, num_classes=FLAGS.num_classes, is_training = False)
+        images, raw_images, labels = load_batch(dataset, batch_size=FLAGS.batch_size, num_classes=FLAGS.num_classes, is_training=False)
 
         #Create some information about the training steps
         # assert dataset.num_samples % FLAGS.batch_size == 0, 'batch size can not be div by number sampels, the total sampels is %s' % dataset.num_samples
@@ -141,15 +139,10 @@ def run():
             # tf.Print(checkpoint_file, [checkpoint_file])
             return saver.restore(sess, checkpoint_file)
 
-        #Just define the metrics to track without the loss or whatsoever
-        # predictions = tf.argmax(end_points['Predictions'], 1)
-        # accuracy, accuracy_update = tf.contrib.metrics.streaming_accuracy(sigmoid_op, labels) ## decleartion?
         lesion_pred = tf.cast(tf.greater_equal(sigmoid_op, 0.5), dtype=tf.float32)
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, labels), tf.float32))
 
-        # one_hot_label = slim.one_hot_encoding(labels, dataset.num_classes)
         loss = tf.losses.log_loss(labels, sigmoid_op)
-        # metrics_op = tf.group(accuracy_update)
 
         #Create the global step and an increment op for monitoring
         global_step = get_or_create_global_step()
@@ -170,11 +163,11 @@ def run():
             logging.info('The step loss is : %s' % step_loss)
             mean_loss.append(step_loss)
             ## process for predict and label
-            # pred_compare = [0] * len(pred)
-            # for i in range(len(pred)):
-            #     pred_compare[i] = 1 if pred[i][1] > 0.5 else 0
-            # pred_compare = [1 if x[1] > 0.5 else 0 for x in pred]
-            # logging.info("The prediction of this batch is:%s" % pred)
+            pred_compare = [0] * len(pred)
+            for i in range(len(pred)):
+                pred_compare[i] = 1 if pred[i][1] > 0.5 else 0
+            pred_compare = [1 if x[1] > 0.5 else 0 for x in pred]
+            logging.info("The prediction of this batch is:%s" % pred_compare)
 
             pred_pos = np.empty(FLAGS.batch_size)
             # label = [int(x) for x in label]
