@@ -167,7 +167,7 @@ def run():
         tf.summary.scalar('accuracy', accuracy)
         # tf.summary.scalar('auc', auc)
         tf.summary.scalar('learning_rate', lr)
-        tf.summary.scalar('epoch', )
+        # tf.summary.scalar('epoch', )
         tf.summary.scalar('val_losses', val_loss)
         tf.summary.scalar('val_accuracy', val_accuracy)
         my_summary_op = tf.summary.merge_all()
