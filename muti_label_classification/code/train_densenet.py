@@ -101,7 +101,7 @@ def run():
        ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
-        loss = tf.reduce_sum(loss, axis=0)
+        loss = tf.reduce_mean(loss)
         #l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])
         # # tf.Print(loss, ["l2_loss: ", l2_loss])
         #loss = log_loss + l2_loss * FLAGS.weight_decay
@@ -156,7 +156,7 @@ def run():
         ## new loss, just equal to the sum of 14 log loss
         # val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
         val_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
-        val_loss = tf.reduce_sum(val_loss, axis=0)
+        val_loss = tf.reduce_mean(val_loss)
 
         val_lesion_pred = tf.cast(tf.greater_equal(val_probabilities, 0.5), tf.float32)
         val_accuracy = tf.reduce_mean(tf.cast(tf.equal(val_lesion_pred, val_labels), tf.float32))
@@ -249,17 +249,17 @@ def run():
                     auc_arr = [0] * FLAGS.num_classes
                     for i in xrange(val_num_batches_per_epoch / 10): ## ok, I just want it run faster!
                         loss_values, accuracy_values, auc = val_step(sess, val_loss, val_accuracy, val_labels, val_probabilities)
-                        val_loss_arr.append(loss_values)
+                        val_loss_arr.append(sum(loss_values) / 32.0)
                         val_acc_arr.append(accuracy_values)
-                        logging.info('Loss on validation batch %s is : %s' % (i, sum(loss_values)))
+                        logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
                         # logging.info('Accuracy on validaton batch %s is : %s' % (i, accuracy_values))
                         # logging.info('AUC on validaton batch %s is : %s' % (i, auc))
                         for idx in range(len(auc)):
                             auc_arr[idx] += auc[idx]
-                    # logging.info('Mean loss on this validation epoch is: %s' % (float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)))
-                    # logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(val_acc_arr)) / max(len(val_acc_arr), 1)))
-                    logging.info('Mean loss on this validation epoch is: %s' % (float(sum(sum(val_loss_arr))) / max(len(val_loss_arr)[0], 1)))
-                    logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(sum(val_acc_arr))) / max(len(val_acc_arr)[0], 1)))
+                    logging.info('Mean loss on this validation epoch is: %s' % (float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)))
+                    logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(val_acc_arr)) / max(len(val_acc_arr), 1)))
+                    # logging.info('Mean loss on this validation epoch is: %s' % (float(sum(sum(val_loss_arr))) / max(len(val_loss_arr)[0], 1)))
+                    # logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(sum(val_acc_arr))) / max(len(val_acc_arr)[0], 1)))
                     mean_auc = [auc / val_num_batches_per_epoch for auc in auc_arr]
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
 
