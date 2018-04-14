@@ -197,7 +197,8 @@ def run():
                 except:
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
-            logging.info('Epoch: %s, global step %s: learning rate: %s, accuracy: %s , loss: %.4f, (%.2f sec/step)', epoch, global_step_count, learning_rate, accuracy_value, total_loss, time_elapsed)
+            logging.info('Epoch: %s, global step %s: learning rate: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, accuracy_value, time_elapsed)
+            logging.info("the loss in this step is : %s" % log_loss)
             return total_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
 
         def val_step(sess, validation_loss, validation_accuracy, val_label, val_probability):
@@ -252,8 +253,8 @@ def run():
                         # logging.info('AUC on validaton batch %s is : %s' % (i, auc))
                         for idx in range(len(auc)):
                             auc_arr[idx] += auc[idx]
-                    logging.info('Mean loss on this validation epoch is: %s' % (float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)))
-                    logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(val_acc_arr)) / max(len(val_acc_arr), 1)))
+                    logging.info('Mean loss on this validation epoch is: %s' % (float(sum(sum(val_loss_arr))) / max(len(len(val_loss_arr)), 1)))
+                    logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(sum(val_acc_arr))) / max(len(len(val_acc_arr)), 1)))
                     mean_auc = [auc / val_num_batches_per_epoch for auc in auc_arr]
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
 
