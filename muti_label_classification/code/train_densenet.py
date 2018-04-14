@@ -241,7 +241,7 @@ def run():
                     logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # learning_rate_value, accuracy_value, auc_value = sess.run([accuracy, auc])
                     logging.info('Current Learning Rate: %s', learning_rate)
-                    logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
+                    # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
                     epoch_loss[:] = []
                     logging.info('Accuracy in this training epoch is : %s', accuracy_value)
                     val_loss_arr = []
