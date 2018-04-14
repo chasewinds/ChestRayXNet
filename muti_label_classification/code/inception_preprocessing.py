@@ -153,9 +153,7 @@ def distorted_bounding_box_crop(image,
     return cropped_image, distort_bbox
 
 
-def preprocess_for_train(image, height, width,
-                         fast_mode=True,
-                         scope=None):
+def preprocess_for_train(image, height, width, fast_mode=True, scope=None):
   """Distort one image for training a network.
 
   Distorting images provides a useful technique for augmenting the data
@@ -182,21 +180,9 @@ def preprocess_for_train(image, height, width,
     3-D float Tensor of distorted image used for training with range [-1, 1].
   """
   with tf.name_scope(scope, 'distort_image', [image, height, width]):
-    # if bbox is None:
-    #   bbox = tf.constant([0.0, 0.0, 1.0, 1.0],
-    #                      dtype=tf.float32,
-    #                      shape=[1, 1, 4])
     if image.dtype != tf.float32:
       image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-    # Each bounding box has shape [1, num_boxes, box coords] and
-    # the coordinates are ordered [ymin, xmin, ymax, xmax].
-    # image_with_box = tf.image.draw_bounding_boxes(tf.expand_dims(image, 0),
-    #                                               bbox)
-    # tf.summary.image('image_with_bounding_boxes', image_with_box)
 
-    # distorted_image, distorted_bbox = distorted_bounding_box_crop(image, bbox)
-    # Restore the shape since the dynamic slice based upon the bbox_size loses
-    # the third dimension.
     image.set_shape([None, None, 3])
     if height and width:
       # Resize the image to the specified height and width.
@@ -206,8 +192,8 @@ def preprocess_for_train(image, height, width,
       image = tf.squeeze(image, [0])
 
     # Randomly flip the image horizontally.
-    # distorted_image = tf.image.random_flip_left_right(image)
-
+    distorted_image = tf.image.random_flip_left_right(image)
+    # the mean and std of ImageNet is as fellow；
     total_mean = tf.constant([118.380948])
     std = tf.constant([61.896913])
     # in chest x ray dataset, the total mean and std is as fellow:
@@ -243,10 +229,6 @@ def preprocess_for_eval(image, height, width,
   with tf.name_scope(scope, 'eval_image', [image, height, width]):
     if image.dtype != tf.float32:
       image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-    # Crop the central region of the image with an area containing 87.5% of
-    # the original image.
-    # if central_fraction:
-    #   image = tf.image.central_crop(image, central_fraction=central_fraction)
 
     if height and width:
       # Resize the image to the specified height and width.
@@ -254,6 +236,7 @@ def preprocess_for_eval(image, height, width,
       image = tf.image.resize_bilinear(image, [height, width],
                                        align_corners=False)
       image = tf.squeeze(image, [0])
+    ## keep the mean and std the seem as train:
     total_mean = tf.constant([118.380948])
     std = tf.constant([61.896913])
     image = tf.subtract(image, total_mean)
