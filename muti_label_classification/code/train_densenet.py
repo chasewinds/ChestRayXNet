@@ -130,7 +130,7 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[20, 0.001],
+        epochs_lr = [[5, 0.001],
                      [20, 0.0006],
                      [30, 0.0001],
                      [50, 0.00001]]
@@ -160,14 +160,14 @@ def run():
             # return loss, accuracy
 
         # Now finally create all the summaries you need to monitor and group them into one summary op.
-        tf.summary.scalar('losses/Total_Loss', loss)
-        tf.summary.scalar('accuracy', accuracy)
+        # tf.summary.scalar('losses/Total_Loss', loss)
+        # tf.summary.scalar('accuracy', accuracy)
         # tf.summary.scalar('auc', auc)
-        tf.summary.scalar('learning_rate', lr)
+        # tf.summary.scalar('learning_rate', lr)
         # tf.summary.scalar('epoch', )
-        tf.summary.scalar('val_losses', val_loss)
-        tf.summary.scalar('val_accuracy', val_accuracy)
-        my_summary_op = tf.summary.merge_all()
+        # tf.summary.scalar('val_losses', val_loss)
+        # tf.summary.scalar('val_accuracy', val_accuracy)
+        # my_summary_op = tf.summary.merge_all()
 
 
         #Now we need to create a training step function that runs both the train_op, metrics_op and updates the global_step concurrently.
@@ -198,7 +198,7 @@ def run():
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
             logging.info('Epoch: %s, global step %s: learning rate: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, accuracy_value, time_elapsed)
-            logging.info("the loss in this step is : %s" % log_loss)
+            logging.info("the loss in this step is : %s" % sum(log_loss)
             return total_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
 
         def val_step(sess, validation_loss, validation_accuracy, val_label, val_probability):
@@ -248,7 +248,7 @@ def run():
                         loss_values, accuracy_values, auc = val_step(sess, val_loss, val_accuracy, val_labels, val_probabilities)
                         val_loss_arr.append(loss_values)
                         val_acc_arr.append(accuracy_values)
-                        # logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
+                        logging.info('Loss on validation batch %s is : %s' % (i, sum(loss_values)))
                         # logging.info('Accuracy on validaton batch %s is : %s' % (i, accuracy_values))
                         # logging.info('AUC on validaton batch %s is : %s' % (i, auc))
                         for idx in range(len(auc)):
@@ -263,7 +263,7 @@ def run():
                     auc_train = [0] * FLAGS.num_classes
                     logging.info('AUC value on the last batch is : %s' % auc)
                     summaries = sess.run(my_summary_ops)
-                    sv.summary_computed(sess, summaries)
+                    # sv.summary_computed(sess, summaries)
 
             #Once all the training has been done, save the log files and checkpoint model
             logging.info('Finished training! Saving model to disk now.')
