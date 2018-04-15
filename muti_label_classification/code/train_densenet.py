@@ -258,7 +258,7 @@ def run():
                         val_acc_arr.append(accuracy_values)
                         logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
                         # logging.info('Accuracy on validaton batch %s is : %s' % (i, accuracy_values))
-                        # logging.info('AUC on validaton batch %s is : %s' % (i, auc))
+                        logging.info('AUC on validaton batch %s is : %s' % (i, auc))
                         for idx in range(len(auc)):
                             auc_arr[idx] += auc[idx]
                     logging.info('Mean loss on this validation epoch is: %s' % (float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)))
