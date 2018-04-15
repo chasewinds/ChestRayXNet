@@ -101,7 +101,7 @@ def run():
         #     exclude = ['densenet161/Logits', 'densenet161/final_block']
         #     variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
         if FLAGS.model_type == 'vgg16':
-            with slim.arg_scope(densenet_arg_scope()):
+            with slim.arg_scope(vgg_arg_scope()):
                 logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
             # Define the scopes that you want to exclude for restoration
@@ -109,8 +109,8 @@ def run():
             variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
             ## convert into probabilities
-            probabilities = tf.sigmoid(logits)
-       ## new loss, just equal to the sum of 14 log loss
+        probabilities = tf.sigmoid(logits)
+        ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
         loss = tf.reduce_mean(loss)
@@ -155,7 +155,7 @@ def run():
         #     with slim.arg_scope(densenet_arg_scope()):
         #         val_logits, _ = densenet161(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
         if FLAGS.model_type == 'vgg16':
-            with slim.arg_scope(densenet_arg_scope()):
+            with slim.arg_scope(vgg_arg_scope()):
                 val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1)
                 val_probabilities = tf.sigmoid(val_logits)
 
