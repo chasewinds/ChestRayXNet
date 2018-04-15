@@ -250,7 +250,7 @@ def run():
                     val_loss_arr = []
                     val_acc_arr = []
                     auc_arr = [0] * FLAGS.num_classes
-                    for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
+                    for i in xrange(val_num_batches_per_epoch / 10): ## ok, I just want it run faster!
                         loss_values, accuracy_values, auc = val_step(sess, val_loss, val_accuracy, val_labels, val_probabilities)
                         # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
                         batch_mean_loss = float(loss_values) / FLAGS.batch_size
