@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow.python.platform import tf_logging as logging
 from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
 from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_scope
-from densenet_elu import densenet161, densenet_arg_scope
+from densenet_elu import densenet121, densenet_arg_scope
 import time
 import os
 from data_prepare import load_batch, get_split
@@ -124,7 +124,7 @@ def run():
         # with slim.arg_scope(inception_resnet_v2_arg_scope()):
             # logits, end_points = inception_resnet_v2(images, num_classes = dataset.num_classes, is_training = False)
         with slim.arg_scope(densenet_arg_scope()):
-            logits, end_points = densenet161(images, fc_dropout_rate=None, num_classes=dataset.num_classes, is_training=False)
+            logits, end_points = densenet121(images, fc_dropout_rate=None, num_classes=dataset.num_classes, is_training=False)
             logits_op = logits
             sigmoid_op = tf.sigmoid(logits_op)
             # logging.info("The logits output from the model is: %s, The prediction of the model is: %s" % (end_points['Logits'], end_points['Predictions']))
