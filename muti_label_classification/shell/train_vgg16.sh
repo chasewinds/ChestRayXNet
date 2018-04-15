@@ -7,6 +7,7 @@ python code/train_vgg16.py \
     --tfrecord_prefix 'chest14_all' \
     --log_dir 'log/vgg16' \
     --image_label_list 'data/list/14muti/label_lesion.txt' \
+    --model_type 'vgg16' \
     --checkpoint_file 'model/vgg16/vgg_16.ckpt' \
     --num_classes 14 \
     --num_epoch 1000 \
