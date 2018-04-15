@@ -108,8 +108,8 @@ def run():
             exclude = ['vgg_16/fc8']
             variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
-        ## convert into probabilities
-        probabilities = tf.sigmoid(logits)
+            ## convert into probabilities
+            probabilities = tf.sigmoid(logits)
        ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
@@ -157,7 +157,7 @@ def run():
         if FLAGS.model_type == 'vgg16':
             with slim.arg_scope(densenet_arg_scope()):
                 val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1)
-        val_probabilities = tf.sigmoid(val_logits)
+                val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
         # val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
