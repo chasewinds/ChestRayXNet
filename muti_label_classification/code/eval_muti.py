@@ -125,9 +125,9 @@ def run():
             # logits, end_points = inception_resnet_v2(images, num_classes = dataset.num_classes, is_training = False)
         with slim.arg_scope(densenet_arg_scope()):
             logits, end_points = densenet121(images, fc_dropout_rate=None, num_classes=dataset.num_classes, is_training=False)
-            logits_op = logits
-            sigmoid_op = tf.sigmoid(logits_op)
-            # logging.info("The logits output from the model is: %s, The prediction of the model is: %s" % (end_points['Logits'], end_points['Predictions']))
+        logits_op = logits
+        sigmoid_op = tf.sigmoid(logits_op)
+        # logging.info("The logits output from the model is: %s, The prediction of the model is: %s" % (end_points['Logits'], end_points['Predictions']))
 
         #get all the variables to restore from the checkpoint file and create the saver function to restore
         variables_to_restore = slim.get_variables_to_restore()
