@@ -64,10 +64,6 @@ def run():
     #Create the log directory here. Must be done here otherwise import will activate this unneededly.
     if not os.path.exists(FLAGS.log_dir):
         os.mkdir(FLAGS.log_dir)
-
-    # Create the file pattern of your TFRecord files so that it could be recognized later on
-    # file_patterns = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
-
     #======================= TRAINING PROCESS =========================
     #Now we start to construct the graph and build our model
     with tf.Graph().as_default() as graph:
@@ -111,7 +107,6 @@ def run():
             # Define the scopes that you want to exclude for restoration
             exclude = ['densenet121/Logits', 'densenet121/final_block']
             variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
-
 
         ## convert into probabilities
         probabilities = tf.sigmoid(logits)
@@ -162,7 +157,6 @@ def run():
         if FLAGS.model_type == 'densenet121':
             with slim.arg_scope(densenet_arg_scope()):
                 val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
-
         val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
@@ -212,9 +206,9 @@ def run():
                 except:
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
-            logging.info('Epoch: %s, global step %s: learning rate: %s, LOSS: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, total_loss, accuracy_value, time_elapsed)
+            logging.info('Epoch: %s, global step %s: learning rate: %s, LOSS: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, log_loss, accuracy_value, time_elapsed)
             # logging.info("the loss in this step is : %s" % str(int(sum(sum(log_loss))) / 14.0))
-            return total_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
+            return log_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
 
         def val_step(sess, validation_loss, validation_accuracy, val_label, val_probability):
             # images, labels, _ = load_batch_from_tfrecord('val')
