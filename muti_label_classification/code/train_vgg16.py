@@ -156,7 +156,7 @@ def run():
         #         val_logits, _ = densenet161(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
         if FLAGS.model_type == 'vgg16':
             with slim.arg_scope(vgg_arg_scope()):
-                val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1)
+                val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
                 val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
