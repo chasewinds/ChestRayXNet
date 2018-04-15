@@ -11,7 +11,7 @@ python code/train_vgg16.py \
     --checkpoint_file 'model/vgg16/vgg_16.ckpt' \
     --num_classes 14 \
     --num_epoch 1000 \
-    --batch_size 32 \
+    --batch_size 48 \
     --step_size 50 \
     --learning_rate 0.01 \
     --lr_decay_factor 0.1 \
