@@ -102,7 +102,7 @@ def run():
         #     variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
         if FLAGS.model_type == 'vgg16':
             with slim.arg_scope(densenet_arg_scope()):
-                logits, _ = vgg_16(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
+                logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
             # Define the scopes that you want to exclude for restoration
             exclude = ['vgg_16/fc8']
@@ -156,7 +156,7 @@ def run():
         #         val_logits, _ = densenet161(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
         if FLAGS.model_type == 'vgg16':
             with slim.arg_scope(densenet_arg_scope()):
-                val_logits, _ = vgg_16(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
+                val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1)
         val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
