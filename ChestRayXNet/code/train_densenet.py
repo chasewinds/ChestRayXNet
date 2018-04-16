@@ -57,7 +57,7 @@ flags.DEFINE_float('weight_decay', 1e-4, 'Float, the weight decay of l2 regular'
 FLAGS = flags.FLAGS
 
 def epoch_auc(label, prob, num_class):
-    auc_arr = [0] * num_class
+    auc_arr = []
     for i in range(num_class):
         epoch_total_label = [y[i] for x in label for y in x]
         epoch_total_pos_prob = [y[i] for x in prob for y in x]
@@ -85,7 +85,7 @@ def run():
         ## get train data
         train_images, train_labels, num_samples = load_batch_from_tfrecord('train')
         ## get validation data
-        val_images, val_labels, val_num_samples = load_batch_from_tfrecord('test')
+        val_images, val_labels, val_num_samples = load_batch_from_tfrecord('validation')
         # #Know the number steps to take before decaying the learning rate and batches per epoch
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
         val_num_batches_per_epoch = (val_num_samples - 1) / FLAGS.batch_size + 1
@@ -123,10 +123,10 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[20, 0.0001],
-                     [30, 0.00001],
-                     [30, 0.000001],
-                     [20, 0.0000001]]
+        epochs_lr = [[50, 0.001],
+                     [10, 0.0005],
+                     [50, 0.0001],
+                     [50, 0.00001]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
@@ -217,6 +217,7 @@ def run():
         #Run the managed session
         with sv.managed_session() as sess:
             total_val_loss = []
+            total_val_auc = []
             epoch_loss = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 ## run a train step
@@ -248,12 +249,14 @@ def run():
                     logging.info('Mean loss on this validation epoch is: %s' % epoch_mean_loss)
                     mean_auc = epoch_auc(val_label_arr, val_prob_arr, FLAGS.num_classes)
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
+                    total_val_auc.append([step/num_batches_per_epoch + 1, mean_auc])
 
                 # Log the summaries every 10 step.
                 if step % 10 == 0:
                     auc_train = [0] * FLAGS.num_classes
                     logging.info('AUC value on the last batch is : %s' % auc)
                     logging.info('validation epoch loss untill now is as fellow: %s' % total_val_loss)
+                    logging.info('AUC every epoch collected is as fellow : %s' % total_val_auc)
                     # logging.info('The 14 subclass loss on the last batch is : %s' % sum(batch_loss))
                     summaries = sess.run(my_summary_ops)
                     sv.summary_computed(sess, summaries)
