@@ -67,7 +67,7 @@ def preprocess_for_train(image, height, width, fast_mode=True, scope=None):
 
     # Randomly flip the image horizontally.
     distorted_image = tf.image.random_flip_left_right(image)
-    base_color_scale = tf.constant([255])
+    base_color_scale = tf.constant([255.0])
     image = tf.subtract(image, base_color_scale)
     # the mean and std of ImageNet is as fellow:
     total_mean = tf.constant([0.485, 0.456, 0.406])
