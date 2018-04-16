@@ -254,9 +254,9 @@ def run():
                 # Log the summaries every 10 step.
                 if step % 100 == 0:
                     auc_train = [0] * FLAGS.num_classes
-                    logging.info('AUC value on the last batch is : %s' % auc)
-                    logging.info('validation epoch loss untill now is as fellow: %s' % total_val_loss)
-                    logging.info('AUC every epoch collected is as fellow : %s' % total_val_auc)
+                    logging.info('AUC value on the last training batch is : %s' % auc)
+                    logging.info('Loss every validation epoch collected is as fellow: %s' % total_val_loss)
+                    logging.info('AUC every validation epoch collected is as fellow : %s' % total_val_auc)
                     # logging.info('The 14 subclass loss on the last batch is : %s' % sum(batch_loss))
                     summaries = sess.run(my_summary_ops)
                     sv.summary_computed(sess, summaries)

@@ -58,8 +58,13 @@ flags.DEFINE_float('weight_decay', 1e-4, 'Float, the weight decay of l2 regular'
 
 FLAGS = flags.FLAGS
 
-
-
+def epoch_auc(label, prob, num_class):
+    auc_arr = []
+    for i in range(num_class):
+        epoch_total_label = [y[i] for x in label for y in x]
+        epoch_total_pos_prob = [y[i] for x in prob for y in x]
+        auc_arr.append([i, roc_auc_score(epoch_total_label, epoch_total_pos_prob)])
+    return auc_arr
 
 def run():
     if model_type != 'inception_resnet_v2':
@@ -201,15 +206,7 @@ def run():
             # images, labels, _ = load_batch_from_tfrecord('val')
             # loss, accuracy = val_graph(val_images, val_labels)
             loss_value, accuracy_value, label, prob = sess.run([validation_loss, validation_accuracy, val_label, val_probability])
-            auc = []
-            for i in range(FLAGS.num_classes):
-                sub_prob = [x[i] for x in prob]
-                sub_label = [x[i] for x in label]
-                try:
-                    auc.append(roc_auc_score(sub_label, sub_prob))
-                except:
-                    continue
-            return loss_value, accuracy_value, auc
+            return loss_value, accuracy_value, label, prob
 
         # create a saver for save and restore ckpt file 
         saver = tf.train.Saver(variables_to_restore)
@@ -221,6 +218,8 @@ def run():
         # sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None)
         #Run the managed session
         with sv.managed_session() as sess:
+            total_val_loss = []
+            total_val_auc = []
             epoch_loss = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 ## run one train step
@@ -231,35 +230,36 @@ def run():
                     logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # learning_rate_value, accuracy_value, auc_value = sess.run([accuracy, auc])
                     logging.info('Current Learning Rate: %s', learning_rate)
-                    # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
+                    logging.info('Accuracy in this training epoch is : %s', accuracy_value)                 epoch_loss[:] = []
                     epoch_loss[:] = []
-                    logging.info('Accuracy in this training epoch is : %s', accuracy_value)
+                    val_label_arr = []
+                    val_prob_arr = []
                     val_loss_arr = []
                     val_acc_arr = []
-                    auc_arr = [0] * FLAGS.num_classes
-                    #run validation set once every epoch, the origin paper say they reduce lr every time validation loss stop decrease,
-                    for i in xrange(val_num_batches_per_epoch / 10): ## ok, I just want it run faster!
-                        loss_values, accuracy_values, auc = val_step(sess, val_loss, val_accuracy, val_labels, val_probabilities)
+                    for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
+                        loss_values, accuracy_values, batch_label, batch_prob = val_step(sess, val_loss, val_accuracy, val_labels, val_probabilities)
                         # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
                         batch_mean_loss = float(loss_values) / FLAGS.batch_size
                         val_loss_arr.append(batch_mean_loss)
                         val_acc_arr.append(accuracy_values)
+                        val_label_arr.append(batch_label)
+                        val_prob_arr.append(batch_prob)
                         logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
                         # logging.info('Accuracy on validaton batch %s is : %s' % (i, accuracy_values))
-                        logging.info('AUC on validaton batch %s is : %s' % (i, auc))
-                        for idx in range(len(auc)):
-                            auc_arr[idx] += auc[idx]
-                    logging.info('Mean loss on this validation epoch is: %s' % (float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)))
-                    logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(val_acc_arr)) / max(len(val_acc_arr), 1)))
-                    # logging.info('Mean loss on this validation epoch is: %s' % (float(sum(sum(val_loss_arr))) / max(len(val_loss_arr)[0], 1)))
-                    # logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(sum(val_acc_arr))) / max(len(val_acc_arr)[0], 1)))
-                    mean_auc = [auc / val_num_batches_per_epoch for auc in auc_arr]
+                        
+                    epoch_mean_loss = float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)
+                    total_val_loss.append(epoch_mean_loss)
+                    logging.info('Mean loss on this validation epoch is: %s' % epoch_mean_loss)
+                    mean_auc = epoch_auc(val_label_arr, val_prob_arr, FLAGS.num_classes)
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
+                    total_val_auc.append([step/num_batches_per_epoch + 1, mean_auc])
 
-                # Log the summaries every 10 step.
-                if step % 10 == 0:
+                # Log the summaries every 100 step.
+                if step % 100 == 0:
                     auc_train = [0] * FLAGS.num_classes
-                    logging.info('AUC value on the last batch is : %s' % auc)
+                    logging.info('AUC value on the last training batch is : %s' % auc)
+                    logging.info('Loss every validation epoch collected is as fellow: %s' % total_val_loss)
+                    logging.info('AUC every validation epoch collected is as fellow : %s' % total_val_auc)
                     # logging.info('The 14 subclass loss on the last batch is : %s' % sum(batch_loss))
                     summaries = sess.run(my_summary_ops)
                     sv.summary_computed(sess, summaries)
