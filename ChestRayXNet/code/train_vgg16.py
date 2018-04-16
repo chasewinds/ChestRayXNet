@@ -89,31 +89,18 @@ def run():
             exclude = ['vgg_16/fc8'] # don't fine tuning the last layer.
             variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
-            ## convert into probabilities
+        # convert into probabilities
         probabilities = tf.sigmoid(logits)
         ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
         loss = tf.reduce_mean(loss)
-
-        ## convert into actual predicte
+        # convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
 
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
-        # decay_steps = int(FLAGS.step_size * num_batches_per_epoch)
-        # Define your exponentially decaying learning rate
-        # lr = tf.train.exponential_decay(
-        #     learning_rate=FLAGS.learning_rate,
-        #     global_step=global_step,
-        #     decay_steps=decay_steps,
-        #     decay_rate=FLAGS.lr_decay_factor,
-        #     staircase=True)
 
-        # epochs_lr = [[5, 0.01],
-        #              [40, 0.001],
-        #              [60, 0.0001],
-        #              [50, 0.00001]]
         epochs_lr = [[20, 0.0002],
                      [40, 0.0001],
                      [20, 0.00001],
@@ -128,13 +115,6 @@ def run():
         train_op = slim.learning.create_train_op(loss, optimizer)
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, train_labels), tf.float32))
-        # metrics_op = tf.group(accuracy, lesion_pred)
-        # auc, _ = tf.metrics.auc(train_labels, probabilities)
-
-        # def val_graph(images, labels):
-        # if FLAGS.model_type == 'densenet161':
-        #     with slim.arg_scope(densenet_arg_scope()):
-        #         val_logits, _ = densenet161(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
         if FLAGS.model_type == 'vgg16':
             with slim.arg_scope(vgg_arg_scope()):
                 val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
@@ -152,9 +132,7 @@ def run():
         # Now finally create all the summaries you need to monitor and group them into one summary op.
         tf.summary.scalar('losses/Total_Loss', loss)
         tf.summary.scalar('accuracy', accuracy)
-        # tf.summary.scalar('auc', auc)
         tf.summary.scalar('learning_rate', lr)
-        # tf.summary.scalar('epoch', )
         tf.summary.scalar('val_losses', val_loss)
         tf.summary.scalar('val_accuracy', val_accuracy)
         my_summary_op = tf.summary.merge_all()
@@ -175,8 +153,7 @@ def run():
             total_loss, global_step_count, accuracy_value, learning_rate, auc_label, auc_prob, log_loss = sess.run([train_op, global_step, accuracy, lr, train_label, probability, origin_loss])
             time_elapsed = time.time() - start_time
             #Run the logging to print some results
-            #logging.info("prob output from the network is : %s, label is : %s, loss from log_loss function is : %s" % (auc_prob, auc_label, log_loss))
-            out_prob = [0 if y < 0.5 else 1 for x in auc_prob for y in x]
+            # out_prob = [0 if y < 0.5 else 1 for x in auc_prob for y in x]
             # logging.info("DEBUG: sigmoid logits is : %s" % out_prob[0])
             auc = []
             for i in range(FLAGS.num_classes):
@@ -220,14 +197,14 @@ def run():
                 ## run a train step
                 batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probabilities, loss)
                 epoch_loss.append(batch_loss)
-                #At the start of every epoch, show the vital information:
+                #At the start of every epoch, show the epoch wise information:
                 if step % num_batches_per_epoch == 0:
-                    logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
+                    logging.info('Epoch %s/%s', step / num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # learning_rate_value, accuracy_value, auc_value = sess.run([accuracy, auc])
-                    logging.info('Current Learning Rate: %s', learning_rate)
-                    # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
+                    # logging.info('Current Learning Rate: %s', learning_rate)
+                    logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
                     epoch_loss[:] = []
-                    logging.info('Accuracy in this training epoch is : %s', accuracy_value)
+                    # logging.info('Accuracy in this training epoch is : %s', accuracy_value)
                     val_loss_arr = []
                     val_acc_arr = []
                     auc_arr = [0] * FLAGS.num_classes
@@ -237,9 +214,9 @@ def run():
                         batch_mean_loss = float(loss_values) / FLAGS.batch_size
                         val_loss_arr.append(batch_mean_loss)
                         val_acc_arr.append(accuracy_values)
-                        logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
+                        logging.info('Loss on this validation batch %s is : %s' % (i, loss_values))
                         # logging.info('Accuracy on validaton batch %s is : %s' % (i, accuracy_values))
-                        logging.info('AUC on validaton batch %s is : %s' % (i, auc))
+                        logging.info('AUC on this validaton batch %s is : %s' % (i, auc))
                         for idx in range(len(auc)):
                             auc_arr[idx] += auc[idx]
                     logging.info('Mean loss on this validation epoch is: %s' % (float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)))
@@ -250,7 +227,7 @@ def run():
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
 
                 # Log the summaries every 10 step.
-                if step % 10 == 0:
+                if step % 20 == 0:
                     auc_train = [0] * FLAGS.num_classes
                     logging.info('AUC value on the last batch is : %s' % auc)
                     # logging.info('The 14 subclass loss on the last batch is : %s' % sum(batch_loss))

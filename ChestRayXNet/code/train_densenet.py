@@ -85,27 +85,12 @@ def run():
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
         val_num_batches_per_epoch = (val_num_samples - 1) / FLAGS.batch_size + 1
 
-        # def run_one_batch(model_name, save_exclude=Flase):
-        #     with slim.arg_scope(densenet_arg_scope()):
-        #         logits, _ = model_name(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
-
-        #     # Define the scopes that you want to exclude for restoration
-        #     exclude = ['densenet161/Logits', 'densenet161/final_block']
-        #     variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
-
-        # if FLAGS.model_type == 'densenet161':
-        #     with slim.arg_scope(densenet_arg_scope()):
-        #         logits, _ = densenet161(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
-
-        #     # Define the scopes that you want to exclude for restoration
-        #     exclude = ['densenet161/Logits', 'densenet161/final_block']
-        #     variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
         if FLAGS.model_type == 'densenet121':
             with slim.arg_scope(densenet_arg_scope()):
                 logits, _ = densenet121(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
 
             # Define the scopes that you want to exclude for restoration
-            exclude = ['densenet121/final_block']
+            exclude = ['densenet121/logits']
             variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
         ## convert into probabilities
@@ -133,9 +118,9 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[20, 0.0001],
-                     [20, 0.00001],
-                     [20, 0.000001],
+        epochs_lr = [[30, 0.0001],
+                     [30, 0.00001],
+                     [30, 0.000001],
                      [20, 0.0000001]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
@@ -234,6 +219,7 @@ def run():
         # sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None)
         #Run the managed session
         with sv.managed_session() as sess:
+            total_val_loss = []
             epoch_loss = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 ## run a train step
@@ -261,8 +247,10 @@ def run():
                         logging.info('AUC on validaton batch %s is : %s' % (i, auc))
                         for idx in range(len(auc)):
                             auc_arr[idx] += auc[idx]
-                    logging.info('Mean loss on this validation epoch is: %s' % (float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)))
-                    logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(val_acc_arr)) / max(len(val_acc_arr), 1)))
+                    epoch_mean_loss = float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)
+                    total_val_loss.append(epoch_mean_loss)
+                    logging.info('Mean loss on this validation epoch is: %s' % epoch_mean_loss)
+                    # logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(val_acc_arr)) / max(len(val_acc_arr), 1)))
                     # logging.info('Mean loss on this validation epoch is: %s' % (float(sum(sum(val_loss_arr))) / max(len(val_loss_arr)[0], 1)))
                     # logging.info('Mean accuracy on this validation epoch is: %s' % (float(sum(sum(val_acc_arr))) / max(len(val_acc_arr)[0], 1)))
                     mean_auc = [auc / val_num_batches_per_epoch for auc in auc_arr]
@@ -272,6 +260,7 @@ def run():
                 if step % 10 == 0:
                     auc_train = [0] * FLAGS.num_classes
                     logging.info('AUC value on the last batch is : %s' % auc)
+                    logging.info('validation epoch loss untill now is as fellow: %s' % total_val_loss)
                     # logging.info('The 14 subclass loss on the last batch is : %s' % sum(batch_loss))
                     summaries = sess.run(my_summary_ops)
                     sv.summary_computed(sess, summaries)
