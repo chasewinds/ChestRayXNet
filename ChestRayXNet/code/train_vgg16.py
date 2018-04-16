@@ -7,13 +7,12 @@ from tensorflow.python.platform import tf_logging as logging
 
 from sklearn.metrics import roc_auc_score
 import inception_preprocessing
-# import mlog
 from data_prepare import get_split, load_batch
 from vgg import vgg_16, vgg_arg_scope
 from custlearningrate import CustLearningRate
 slim = tf.contrib.slim
 
-#================ DATASET INFORMATION ======================
+#================ Variabled from shell  ======================
 
 """
 all the argment need to read from shell is as fellow:
@@ -35,9 +34,7 @@ flags.DEFINE_string('image_label_list', None, 'String, the list which save all y
 
 flags.DEFINE_string('model_type', None, 'String, select network for training and validation')
 
-flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')
-
-# flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')
+flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')8976
 
 # hparmeters
 flags.DEFINE_integer('num_classes', 2, 'Int, Number of classes your network output')
@@ -64,11 +61,10 @@ def run():
     #Create the log directory here. Must be done here otherwise import will activate this unneededly.
     if not os.path.exists(FLAGS.log_dir):
         os.mkdir(FLAGS.log_dir)
-    #======================= TRAINING PROCESS =========================
-    #Now we start to construct the graph and build our model
+    #========================================= Bulid Graph ==========================================
     with tf.Graph().as_default() as graph:
         tf.logging.set_verbosity(tf.logging.INFO) #Set the verbosity to INFO level
-        # #First create the dataset and load one batch
+        # create the dataset and load one batch from tfrecord
         def load_batch_from_tfrecord(split_name, dataset_dir=FLAGS.tfrecord_dir, num_classes=FLAGS.num_classes,
                                      file_pattern_for_counting=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size):
             is_training = True if split_name == 'train' else False
@@ -77,35 +73,20 @@ def run():
             images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=is_training)
             return images, labels, dataset.num_samples
 
-        ## get train data
+        ## load train data
         train_images, train_labels, num_samples = load_batch_from_tfrecord('train')
-        ## get validation data
+        ## load validation data
         val_images, val_labels, val_num_samples = load_batch_from_tfrecord('validation')
-        # #Know the number steps to take before decaying the learning rate and batches per epoch
+        # Know the number steps to take before decaying the learning rate and batches per epoch
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
         val_num_batches_per_epoch = (val_num_samples - 1) / FLAGS.batch_size + 1
 
-        # def run_one_batch(model_name, save_exclude=Flase):
-        #     with slim.arg_scope(densenet_arg_scope()):
-        #         logits, _ = model_name(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
-
-        #     # Define the scopes that you want to exclude for restoration
-        #     exclude = ['densenet161/Logits', 'densenet161/final_block']
-        #     variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
-
-        # if FLAGS.model_type == 'densenet161':
-        #     with slim.arg_scope(densenet_arg_scope()):
-        #         logits, _ = densenet161(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
-
-        #     # Define the scopes that you want to exclude for restoration
-        #     exclude = ['densenet161/Logits', 'densenet161/final_block']
-        #     variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
         if FLAGS.model_type == 'vgg16':
             with slim.arg_scope(vgg_arg_scope()):
                 logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
             # Define the scopes that you want to exclude for restoration
-            exclude = ['vgg_16/fc8']
+            exclude = ['vgg_16/fc8'] # don't fine tuning the last layer.
             variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
             ## convert into probabilities
@@ -134,7 +115,7 @@ def run():
         #              [60, 0.0001],
         #              [50, 0.00001]]
         epochs_lr = [[20, 0.0002],
-                     [30, 0.0001],
+                     [40, 0.0001],
                      [20, 0.00001],
                      [20, 0.000001]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
