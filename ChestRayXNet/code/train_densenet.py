@@ -252,7 +252,7 @@ def run():
                     total_val_auc.append([step/num_batches_per_epoch + 1, mean_auc])
 
                 # Log the summaries every 10 step.
-                if step % 10 == 0:
+                if step % 100 == 0:
                     auc_train = [0] * FLAGS.num_classes
                     logging.info('AUC value on the last batch is : %s' % auc)
                     logging.info('validation epoch loss untill now is as fellow: %s' % total_val_loss)
