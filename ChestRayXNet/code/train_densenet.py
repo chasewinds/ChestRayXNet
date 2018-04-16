@@ -56,7 +56,7 @@ flags.DEFINE_float('weight_decay', 1e-4, 'Float, the weight decay of l2 regular'
 
 FLAGS = flags.FLAGS
 
-def epoch_auc(label, prob):
+# def epoch_auc(label, prob):
 
 
 
