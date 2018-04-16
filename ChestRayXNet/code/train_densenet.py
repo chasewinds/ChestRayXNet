@@ -61,9 +61,8 @@ def epoch_auc(label, prob, num_class):
     for i in range(num_class):
         epoch_total_label = [y[i] for y in x for x in label]
         epoch_total_pos_prob = [y[i] for y in x for x in prob]
-        
-
-
+        auc_arr.append([i, roc_auc_score(epoch_total_label, epoch_total_pos_prob)])
+    return auc_arr
 
 def run():
     image_size = 224
@@ -249,8 +248,8 @@ def run():
                     total_val_loss.append(epoch_mean_loss)
                     logging.info('Mean loss on this validation epoch is: %s' % epoch_mean_loss)
                     for i in range(FLAGS.num_classes):
-                        auc_label = [y[i] for y in x for x in val_label_arr] # x is batch data y is sample data
-                        auc_prob = [y[i] for y in x for x in val_prob_arr]
+                        auc_label = [y[i] for x in val_label_arr for y in x] # x is batch data y is sample data
+                        auc_prob = [y[i] for x in val_prob_arr for y in x]
                         try:
                             auc.append([i, roc_auc_score(auc_label, auc_prob)])
                         except:
