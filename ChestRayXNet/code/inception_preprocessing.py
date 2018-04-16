@@ -113,7 +113,7 @@ def preprocess_for_eval(image, height, width,
                                        align_corners=False)
       image = tf.squeeze(image, [0])
     ## keep the mean and std the seem as train:
-    base_color_scale = tf.constant([255])
+    base_color_scale = tf.constant([255.0])
     image = tf.subtract(image, base_color_scale)
     # the mean and std of ImageNet is as fellow:
     total_mean = tf.constant([0.485, 0.456, 0.406])
