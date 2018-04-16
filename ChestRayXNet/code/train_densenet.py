@@ -57,10 +57,10 @@ flags.DEFINE_float('weight_decay', 1e-4, 'Float, the weight decay of l2 regular'
 FLAGS = flags.FLAGS
 
 def epoch_auc(label, prob, num_class):
-    auc_arr = []
+    auc_arr = [0] * num_class
     for i in range(num_class):
-        epoch_total_label = [y[i] for y in x for x in label]
-        epoch_total_pos_prob = [y[i] for y in x for x in prob]
+        epoch_total_label = [y[i] for x in label for y in x]
+        epoch_total_pos_prob = [y[i] for x in prob for y in x]
         auc_arr.append([i, roc_auc_score(epoch_total_label, epoch_total_pos_prob)])
     return auc_arr
 
@@ -232,8 +232,7 @@ def run():
                     val_prob_arr = []
                     val_loss_arr = []
                     val_acc_arr = []
-                    auc_arr = [0] * FLAGS.num_classes
-                    for i in xrange(val_num_batches_per_epoch / 10): ## ok, I just want it run faster!
+                    for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
                         loss_values, accuracy_values, batch_label, batch_prob = val_step(sess, val_loss, val_accuracy, val_labels, val_probabilities)
                         # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
                         batch_mean_loss = float(loss_values) / FLAGS.batch_size
@@ -247,13 +246,7 @@ def run():
                     epoch_mean_loss = float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)
                     total_val_loss.append(epoch_mean_loss)
                     logging.info('Mean loss on this validation epoch is: %s' % epoch_mean_loss)
-                    for i in range(FLAGS.num_classes):
-                        auc_label = [y[i] for x in val_label_arr for y in x] # x is batch data y is sample data
-                        auc_prob = [y[i] for x in val_prob_arr for y in x]
-                        try:
-                            auc.append([i, roc_auc_score(auc_label, auc_prob)])
-                        except:
-                            continue
+                    mean_auc = epoch_auc(val_label_arr, val_prob_arr, FLAGS.num_classes)
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
 
                 # Log the summaries every 10 step.
