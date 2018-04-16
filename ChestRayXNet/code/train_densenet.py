@@ -90,7 +90,7 @@ def run():
                 logits, _ = densenet121(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
 
             # Define the scopes that you want to exclude for restoration
-            exclude = ['densenet121/logits']
+            exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
             variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
         ## convert into probabilities
@@ -118,7 +118,7 @@ def run():
         #              [40, 0.001],
         #              [60, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[30, 0.0001],
+        epochs_lr = [[20, 0.0001],
                      [30, 0.00001],
                      [30, 0.000001],
                      [20, 0.0000001]]
