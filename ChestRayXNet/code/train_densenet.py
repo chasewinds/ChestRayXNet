@@ -56,6 +56,7 @@ flags.DEFINE_float('weight_decay', 1e-4, 'Float, the weight decay of l2 regular'
 
 FLAGS = flags.FLAGS
 
+def epoch_auc(label, prob):
 
 
 
@@ -234,8 +235,8 @@ def run():
                         batch_mean_loss = float(loss_values) / FLAGS.batch_size
                         val_loss_arr.append(batch_mean_loss)
                         val_acc_arr.append(accuracy_values)
-                        val_label_arr.append(val_label)
-                        val_prob_arr.append(val_prob)
+                        val_label_arr.append(batch_label)
+                        val_prob_arr.append(batch_prob)
                         logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
                         # logging.info('Accuracy on validaton batch %s is : %s' % (i, accuracy_values))
                         
