@@ -56,7 +56,12 @@ flags.DEFINE_float('weight_decay', 1e-4, 'Float, the weight decay of l2 regular'
 
 FLAGS = flags.FLAGS
 
-# def epoch_auc(label, prob):
+def epoch_auc(label, prob, num_class):
+    auc_arr = []
+    for i in range(num_class):
+        epoch_total_label = [y[i] for y in x for x in label]
+        epoch_total_pos_prob = [y[i] for y in x for x in prob]
+        
 
 
 
@@ -200,7 +205,7 @@ def run():
             # images, labels, _ = load_batch_from_tfrecord('val')
             # loss, accuracy = val_graph(val_images, val_labels)
             loss_value, accuracy_value, label, prob = sess.run([validation_loss, validation_accuracy, val_label, val_probability])
-            return loss_value, accuracy_value, val_label, val_prob
+            return loss_value, accuracy_value, label, prob
 
         # # Now we create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
