@@ -110,23 +110,11 @@ def run():
 
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
-        # decay_steps = int(FLAGS.step_size * num_batches_per_epoch)
-        # Define your exponentially decaying learning rate
-        # lr = tf.train.exponential_decay(
-        #     learning_rate=FLAGS.learning_rate,
-        #     global_step=global_step,
-        #     decay_steps=decay_steps,
-        #     decay_rate=FLAGS.lr_decay_factor,
-        #     staircase=True)
 
-        # epochs_lr = [[5, 0.01],
-        #              [40, 0.001],
-        #              [60, 0.0001],
-        #              [50, 0.00001]]
-        epochs_lr = [[50, 0.001],
-                     [10, 0.0005],
-                     [50, 0.0001],
-                     [50, 0.00001]]
+        epochs_lr = [[100, 0.0001],
+                     [10, 0.00001],
+                     [50, 0.000001],
+                     [50, 0.0000001]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
@@ -251,7 +239,7 @@ def run():
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
                     total_val_auc.append([step/num_batches_per_epoch + 1, mean_auc])
 
-                # Log the summaries every 10 step.
+                # Log the summaries every 100 step.
                 if step % 100 == 0:
                     auc_train = [0] * FLAGS.num_classes
                     logging.info('AUC value on the last training batch is : %s' % auc)
