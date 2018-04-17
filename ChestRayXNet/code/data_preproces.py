@@ -61,7 +61,6 @@ def preprocess_for_train(image, height, width, scope=None):
       # Resize the image to the specified height and width.
       image = tf.expand_dims(image, 0)
       image = tf.image.resize_images(image, [height, width],
-                                     method=ResizeMethod.BILINEAR,
                                      align_corners=True) ## remember in original this option is False
       image = tf.squeeze(image, [0])
     # Randomly flip the image horizontally.
@@ -110,7 +109,6 @@ def preprocess_for_eval(image, height, width,
       # Resize the image to the specified height and width.
       image = tf.expand_dims(image, 0)
       image = tf.image.resize_images(image, [height, width],
-                                     method=ResizeMethod.BILINEAR,
                                      align_corners=True) ## remember in original this option is False
       image = tf.squeeze(image, [0])
     ## keep the mean and std the seem as train:
