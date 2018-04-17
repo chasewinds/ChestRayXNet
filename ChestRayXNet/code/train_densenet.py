@@ -215,9 +215,7 @@ def run():
             epoch_loss = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 ## run a train step
-                batch_loss, global_step_count, accuracy_value, 
-                learning_rate, my_summary_ops, auc = train_step(sess, 
-                train_op, global_step, accuracy, lr, my_summary_op, train_labels, probabilities, total_loss)
+                batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probabilities, total_loss)
                 epoch_loss.append(batch_loss)
                 #At the start of every epoch, show some global informations and run validation set once:
                 if step % num_batches_per_epoch == 0:
