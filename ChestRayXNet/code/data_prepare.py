@@ -120,8 +120,8 @@ def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_train
     images, raw_images, labels = tf.train.batch(
         [image, raw_image, label],
         batch_size = batch_size,
-        num_threads = 4,
-        capacity = 4 * batch_size,
+        num_threads = 10,
+        capacity = 10 * batch_size,
         allow_smaller_final_batch = True)
 
     return images, raw_images, labels
