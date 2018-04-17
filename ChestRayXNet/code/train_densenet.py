@@ -72,10 +72,12 @@ def write_log(loss_arr, auc_arr, txt_path):
               'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
     with open(txt_path, 'w') as f:
         for i in range(len(loss_arr)):
-            f.write("The mean loss before Epoch %s, is %s" % (i + 1, loss_arr[i]))
+            f.write("The mean loss before Epoch %s, is %s\n" % (i + 1, loss_arr[i]))
             sample_auc = auc_arr[i]
-            lesion_auc = [[lesion[j], sample_auc[j]] for j in range(len(lesion))]
-            f.write("The AUC value of each sub class before Epoch %s, is: %s" % (i + 1, lesion_auc))
+            # lesion_auc = [[lesion[j], sample_auc[j]] for j in range(len(lesion))]
+            # f.write("The AUC value of each sub class before Epoch %s, is: %s\n" % (i + 1, lesion_auc))
+            for j in range(len(lesion)):
+                f.write('%s : %s\n' % (lesion[j], sample_auc[j]))
 
 def run():
     image_size = 224
@@ -235,7 +237,7 @@ def run():
                     for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
                         loss_values, accuracy_values, batch_label, batch_prob = val_step(sess, val_loss, val_accuracy, val_labels, val_probabilities)
                         # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
-                        batch_mean_loss = float(loss_values) / FLAGS.batch_size
+                        batch_mean_loss = float(loss_values)
                         val_loss_arr.append(batch_mean_loss)
                         val_acc_arr.append(accuracy_values)
                         val_label_arr.append(batch_label)
