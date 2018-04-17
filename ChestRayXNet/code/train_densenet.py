@@ -78,6 +78,7 @@ def write_log(loss_arr, auc_arr, txt_path):
             # f.write("The AUC value of each sub class before Epoch %s, is: %s\n" % (i + 1, lesion_auc))
             for j in range(len(lesion)):
                 f.write('%s : %s\n' % (lesion[j], sample_auc[j][1]))
+            f.write('\n')
 
 def run():
     image_size = 224
@@ -117,8 +118,10 @@ def run():
         probabilities = tf.sigmoid(logits)
        ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
-        loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
-        loss = tf.reduce_mean(loss)
+        cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
+        loss = tf.reduce_mean(cross_entropy_loss)
+        l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])
+        total_loss = loss + l2_loss * FLAGS.weight_decay
 
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
@@ -137,7 +140,7 @@ def run():
         # Now we can define the optimizer that takes on the learning rate
         optimizer = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # Create the train_op.
-        train_op = slim.learning.create_train_op(loss, optimizer)
+        train_op = slim.learning.create_train_op(total_loss, optimizer)
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, train_labels), tf.float32))
         # metrics_op = tf.group(accuracy, lesion_pred)

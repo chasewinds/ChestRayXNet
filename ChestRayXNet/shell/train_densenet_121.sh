@@ -16,4 +16,4 @@ python code/train_densenet.py \
     --step_size 50 \
     --learning_rate 0.01 \
     --lr_decay_factor 0.1 \
-    --weight_decay 1e-4
+    --weight_decay 1e-5
