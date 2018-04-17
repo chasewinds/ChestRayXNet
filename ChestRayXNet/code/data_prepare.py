@@ -67,7 +67,7 @@ def get_split(split_name, dataset_dir, num_classes, file_pattern, file_pattern_f
         data_sources = file_pattern_path,
         decoder = decoder,
         reader = reader,
-        num_readers = 10,
+        num_readers = 20,
         num_samples = num_samples,
         num_classes = num_classes,
         labels_to_name = labels_to_name_dict,
@@ -93,10 +93,10 @@ def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_train
     #First create the data_provider object
     data_provider = slim.dataset_data_provider.DatasetDataProvider(
         dataset,
-        num_readers=10,
+        num_readers=20,
         shuffle=True,
-        common_queue_capacity = 24 + 3 * batch_size,
-        common_queue_min = 24)
+        common_queue_capacity = 64 + 8 * batch_size,
+        common_queue_min = 64)
 
     #Obtain the raw image using the get method
     raw_image, label = data_provider.get(['image', 'label'])
