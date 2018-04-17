@@ -5,14 +5,15 @@ Quick Start:<br />
 2.Download chest_ray_14 dataset and unzip them in one floder, defult folder of this project is ChestRayXNet/data/image<br />
 3.Modify the image path in ChestRayXNet/shell/write_all.sh<br />
 4.Run shell/write_all.sh under ChestRayXNet, then you start convert 112,120 chest x ray images into 30 TFRecord file.(train, validation,test set included)<br />
-5.Decide which kinds of network you want to train on, <br />
+5.To start runing the network quickly and get the similarly result as CheXNet, run shell/train_densenet_121.sh
+6.Decide which kinds of network you want to train on, this is a imporved option and maybe you need to modify more code<br />
   (1)If you want to train densenet121, modify shell/train_generate.sh --model_type to densenet121 and --log_dir to log/dense121<br />
   (2)If you want to train densenet161, modify shell/train_generate.sh --model_type to densenet161 and --log_dir to log/dense161<br />
   (3)If you want to train vgg16, modify shell/train_generate.sh --model_type to vgg16 and --log_dir to log/vgg16<br />
-6.To get the overview of train, run the fellowing command on terminal:<br />
+7.To get the overview of train, run the fellowing command on terminal:<br />
 tensorbord --logdir='LOG_DIR' --port=6006<br />
 The perameter 'LOG_DIR' is the path where you save your training log, can be found in train_generate.sh<br />
-7.To evaluate the model performance, run shell/eval_muti.sh, remember to check the model type in eval_muti.py<br />
+8.To evaluate the model performance, run shell/eval_muti.sh, remember to check the model type in eval_muti.py<br />
 
 In the futher, I will merge all the training file onto a single .py file, and you can simply change the perameter in shell <br />
 script for different network.<br />
