@@ -77,7 +77,7 @@ def write_log(loss_arr, auc_arr, txt_path):
             # lesion_auc = [[lesion[j], sample_auc[j]] for j in range(len(lesion))]
             # f.write("The AUC value of each sub class before Epoch %s, is: %s\n" % (i + 1, lesion_auc))
             for j in range(len(lesion)):
-                f.write('%s : %s\n' % (lesion[j], sample_auc[j]))
+                f.write('%s : %s\n' % (lesion[j], sample_auc[j][1]))
 
 def run():
     image_size = 224
