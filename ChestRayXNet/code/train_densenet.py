@@ -72,10 +72,10 @@ def write_log(loss_arr, auc_arr, txt_path):
               'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
     with open(txt_path, 'w') as f:
         for i in range(len(loss_arr)):
-            f.write("The mean loss before Epoch %s, is %s" % i + 1, loss_arr[i])
+            f.write("The mean loss before Epoch %s, is %s" % (i + 1, loss_arr[i]))
             sample_auc = auc_arr[i]
             lesion_auc = [[lesion[j], sample_auc[j]] for j in range(len(lesion))]
-            f.write("The AUC value of each sub class before Epoch %s, is: %s" % i + 1, lesion_auc)
+            f.write("The AUC value of each sub class before Epoch %s, is: %s" % (i + 1, lesion_auc))
 
 def run():
     image_size = 224
