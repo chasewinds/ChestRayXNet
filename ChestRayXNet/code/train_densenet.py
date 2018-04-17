@@ -119,11 +119,11 @@ def run():
        ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
-        loss = cross_entropy_loss
-        # loss = tf.reduce_mean(cross_entropy_loss)
-        # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
-        # total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
-        total_loss = tf.reduce_mean(cross_entropy_loss)
+        # loss = cross_entropy_loss
+        loss = tf.reduce_mean(cross_entropy_loss)
+        l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
+        total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
+        total_loss = tf.reduce_mean(total_loss)
 
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
@@ -131,8 +131,8 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[100, 0.0001],
-                     [10, 0.00001],
+        epochs_lr = [[50, 0.0001],
+                     [50, 0.00001],
                      [50, 0.000001],
                      [50, 0.0000001]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
@@ -161,7 +161,7 @@ def run():
             # return loss, accuracy
 
         # Now finally create all the summaries you need to monitor and group them into one summary op.
-        tf.summary.scalar('losses/Total_Loss', total_loss)
+        tf.summary.scalar('losses/Total_Loss', loss)
         tf.summary.scalar('accuracy', accuracy)
         tf.summary.scalar('learning_rate', lr)
         tf.summary.scalar('val_losses', val_loss)
@@ -202,12 +202,12 @@ def run():
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
-        def restore_fn(sess):
-            return saver.restore(sess, FLAGS.checkpoint_file)
+        # def restore_fn(sess):
+            # return saver.restore(sess, FLAGS.checkpoint_file)
 
         # Define your supervisor for running a managed session. Do not run the summary_op automatically or else it will consume too much memory
-        sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None, init_fn=restore_fn)
-        # sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None)
+        # sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None, init_fn=restore_fn)
+        sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None)
         #Run the managed session
         with sv.managed_session() as sess:
             total_val_loss = []
@@ -215,7 +215,7 @@ def run():
             epoch_loss = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 ## run a train step
-                batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probabilities, total_loss)
+                batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probabilities, loss)
                 epoch_loss.append(batch_loss)
                 #At the start of every epoch, show some global informations and run validation set once:
                 if step % num_batches_per_epoch == 0:
