@@ -120,8 +120,9 @@ def run():
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
         loss = tf.reduce_mean(cross_entropy_loss)
-        l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])
-        total_loss = loss + l2_loss * FLAGS.weight_decay
+        l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
+        total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
+        total_loss = tf.reduce_mean(total_loss)
 
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
