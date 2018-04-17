@@ -31,6 +31,8 @@ flags.DEFINE_string('tfrecord_prefix', None, 'String, The prefix of your tfrecor
 
 flags.DEFINE_string('log_dir', None, 'String, The dirctory where the training log be saved at')
 
+flags.DEFINE_string('log_txt_path', None, 'String, A txt file path which save the validation log information before every epoch')
+
 flags.DEFINE_string('image_label_list', None, 'String, the list which save all your image and lable be used in training and validation')
 
 flags.DEFINE_string('model_type', None, 'String, select network for training and validation')
@@ -63,6 +65,17 @@ def epoch_auc(label, prob, num_class):
         epoch_total_pos_prob = [y[i] for x in prob for y in x]
         auc_arr.append([i, roc_auc_score(epoch_total_label, epoch_total_pos_prob)])
     return auc_arr
+
+def write_log(loss_arr, auc_arr, txt_path):
+    lesion = [Atelectasis, Cardiomegaly, Effusion, Infiltration,
+              Mass, Nodule, Pneumonia, Pneumothorax, Consolidation,
+              Edema, Emphysema, Fibrosis, Pleural_Thickening, Hernia]
+    with open(txt_path) as f:
+        for i in range(len(loss_arr)):
+            f.write("The mean loss before Epoch %s, is %s" % i + 1, loss_arr[i])
+            sample_auc = auc_arr[i]
+            lesion_auc = [[lesion[j], sample_auc[j]] for j in range(len(lesion))]
+            f.write("The AUC value of each sub class before Epoch %s, is: %s" % i + 1, lesion_auc)
 
 def run():
     image_size = 224
@@ -149,9 +162,7 @@ def run():
         # Now finally create all the summaries you need to monitor and group them into one summary op.
         tf.summary.scalar('losses/Total_Loss', loss)
         tf.summary.scalar('accuracy', accuracy)
-        # tf.summary.scalar('auc', auc)
         tf.summary.scalar('learning_rate', lr)
-        # tf.summary.scalar('epoch', )
         tf.summary.scalar('val_losses', val_loss)
         tf.summary.scalar('val_accuracy', val_accuracy)
         my_summary_op = tf.summary.merge_all()
@@ -173,7 +184,7 @@ def run():
             time_elapsed = time.time() - start_time
             #Run the logging to print some results
             #logging.info("prob output from the network is : %s, label is : %s, loss from log_loss function is : %s" % (auc_prob, auc_label, log_loss))
-            out_prob = [0 if y < 0.5 else 1 for x in auc_prob for y in x]
+            # out_prob = [0 if y < 0.5 else 1 for x in auc_prob for y in x]
             # logging.info("DEBUG: sigmoid logits is : %s" % out_prob[0])
             auc = []
             for i in range(FLAGS.num_classes):
@@ -194,13 +205,13 @@ def run():
             loss_value, accuracy_value, label, prob = sess.run([validation_loss, validation_accuracy, val_label, val_probability])
             return loss_value, accuracy_value, label, prob
 
-        # # Now we create a saver function that actually restores the variables from a checkpoint file in a sess
+        # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
-
         def restore_fn(sess):
             return saver.restore(sess, FLAGS.checkpoint_file)
+
         # Define your supervisor for running a managed session. Do not run the summary_op automatically or else it will consume too much memory
-        sv = tf.train.Supervisor(logdir = FLAGS.log_dir, summary_op = None, init_fn=restore_fn)
+        sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None, init_fn=restore_fn)
         # sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None)
         #Run the managed session
         with sv.managed_session() as sess:
@@ -211,7 +222,7 @@ def run():
                 ## run a train step
                 batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probabilities, loss)
                 epoch_loss.append(batch_loss)
-                #At the start of every epoch, show the vital information:
+                #At the start of every epoch, show some global informations and run validation set once:
                 if step % num_batches_per_epoch == 0:
                     logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
@@ -231,20 +242,20 @@ def run():
                         val_prob_arr.append(batch_prob)
                         logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
                         # logging.info('Accuracy on validaton batch %s is : %s' % (i, accuracy_values))
-                        
                     epoch_mean_loss = float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)
                     total_val_loss.append(epoch_mean_loss)
                     logging.info('Mean loss on this validation epoch is: %s' % epoch_mean_loss)
+
                     mean_auc = epoch_auc(val_label_arr, val_prob_arr, FLAGS.num_classes)
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
-                    total_val_auc.append([step/num_batches_per_epoch + 1, mean_auc])
+                    total_val_auc.append(mean_auc)
+                    write_log(total_val_loss, total_val_auc, FLAGS.log_txt_path)
 
                 # Log the summaries every 100 step.
-                if step % 100 == 0:
-                    auc_train = [0] * FLAGS.num_classes
+                if step % 20 == 0:
                     logging.info('AUC value on the last training batch is : %s' % auc)
-                    logging.info('Loss every validation epoch collected is as fellow: %s' % total_val_loss)
-                    logging.info('AUC every validation epoch collected is as fellow : %s' % total_val_auc)
+                    # logging.info('Loss every validation epoch collected is as fellow: %s' % total_val_loss)
+                    # logging.info('AUC every validation epoch collected is as fellow : %s' % total_val_auc)
                     # logging.info('The 14 subclass loss on the last batch is : %s' % sum(batch_loss))
                     summaries = sess.run(my_summary_ops)
                     sv.summary_computed(sess, summaries)
