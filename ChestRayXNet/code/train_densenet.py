@@ -131,10 +131,10 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[50, 0.0001],
-                     [50, 0.00001],
-                     [50, 0.000001],
-                     [50, 0.0000001]]
+        epochs_lr = [[50, 0.01],
+                     [50, 0.001],
+                     [50, 0.0001],
+                     [50, 0.00001]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
