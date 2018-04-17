@@ -70,7 +70,7 @@ def write_log(loss_arr, auc_arr, txt_path):
     lesion = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration',
               'Mass', 'Nodule', 'Pneumonia', 'Pneumothorax', 'Consolidation',
               'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
-    with open(txt_path) as f:
+    with open(txt_path, 'w') as f:
         for i in range(len(loss_arr)):
             f.write("The mean loss before Epoch %s, is %s" % i + 1, loss_arr[i])
             sample_auc = auc_arr[i]
