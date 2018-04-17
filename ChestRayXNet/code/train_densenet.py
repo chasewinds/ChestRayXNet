@@ -119,6 +119,7 @@ def run():
        ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
         cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
+        loss = cross_entropy_loss
         # loss = tf.reduce_mean(cross_entropy_loss)
         # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
         # total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
