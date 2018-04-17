@@ -1,5 +1,4 @@
-"""Provides utilities to preprocess images for the Inception networks."""
-
+"""Provides utilities to preprocess images for networks."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -27,7 +26,7 @@ def apply_with_random_selector(x, func, num_cases):
       func(control_flow_ops.switch(x, tf.equal(sel, case))[1], case)
       for case in range(num_cases)])[0]
 
-def preprocess_for_train(image, height, width, fast_mode=True, scope=None):
+def preprocess_for_train(image, height, width, scope=None):
   """Distort one image for training a network.
 
   Distorting images provides a useful technique for augmenting the data
@@ -61,12 +60,13 @@ def preprocess_for_train(image, height, width, fast_mode=True, scope=None):
     if height and width:
       # Resize the image to the specified height and width.
       image = tf.expand_dims(image, 0)
-      image = tf.image.resize_bilinear(image, [height, width],
-                                       align_corners=False)
+      image = tf.image.resize_images(image, [height, width],
+                                     method=ResizeMethod.BILINEAR,
+                                     align_corners=True) ## remember in original this option is False
       image = tf.squeeze(image, [0])
-
     # Randomly flip the image horizontally.
     distorted_image = tf.image.random_flip_left_right(image)
+
     base_color_scale = tf.constant([255.0])
     image = tf.subtract(image, base_color_scale)
     # the mean and std of ImageNet is as fellow:
@@ -109,8 +109,9 @@ def preprocess_for_eval(image, height, width,
     if height and width:
       # Resize the image to the specified height and width.
       image = tf.expand_dims(image, 0)
-      image = tf.image.resize_bilinear(image, [height, width],
-                                       align_corners=False)
+      image = tf.image.resize_images(image, [height, width],
+                                     method=ResizeMethod.BILINEAR,
+                                     align_corners=True) ## remember in original this option is False
       image = tf.squeeze(image, [0])
     ## keep the mean and std the seem as train:
     base_color_scale = tf.constant([255.0])
@@ -148,6 +149,6 @@ def preprocess_image(image, height, width,
   """
   # image = tf.image.resize_image_with_crop_or_pad(image, height, width)
   if is_training:
-    return preprocess_for_train(image, height, width, fast_mode)
+    return preprocess_for_train(image, height, width)
   else:
     return preprocess_for_eval(image, height, width)

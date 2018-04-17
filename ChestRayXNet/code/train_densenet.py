@@ -1,13 +1,13 @@
 import os
 import time
+import random
 
 import tensorflow as tf
 from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
 from tensorflow.python.platform import tf_logging as logging
 
 from sklearn.metrics import roc_auc_score
-import inception_preprocessing
-# import mlog
+import data_preproces
 from data_prepare import get_split, load_batch
 from densenet_elu import densenet121, densenet161, densenet_arg_scope
 from custlearningrate import CustLearningRate
@@ -54,7 +54,7 @@ flags.DEFINE_float('learning_rate', 0.0002, 'Float, Set the learning rate of you
 
 flags.DEFINE_float('lr_decay_factor', 0.7, 'Float, Set the decay factor every time you decay your learning rate')
 
-flags.DEFINE_float('weight_decay', 1e-4, 'Float, the weight decay of l2 regular')
+flags.DEFINE_float('weight_decay', 1e-5, 'Float, the weight decay of l2 regular')
 
 FLAGS = flags.FLAGS
 
@@ -143,13 +143,7 @@ def run():
         train_op = slim.learning.create_train_op(total_loss, optimizer)
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, train_labels), tf.float32))
-        # metrics_op = tf.group(accuracy, lesion_pred)
-        # auc, _ = tf.metrics.auc(train_labels, probabilities)
 
-        # def val_graph(images, labels):
-        # if FLAGS.model_type == 'densenet161':
-        #     with slim.arg_scope(densenet_arg_scope()):
-        #         val_logits, _ = densenet161(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
         if FLAGS.model_type == 'densenet121':
             with slim.arg_scope(densenet_arg_scope()):
                 val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
@@ -178,12 +172,6 @@ def run():
             '''
             Simply runs a session for the three arguments provided and gives a logging on the time elapsed for each global step
             '''
-            # images, labels, num_samples = load_batch_from_tfrecord('train')
-            # Know the number steps to take before decaying the learning rate and batches per epoch
-            # num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
-            ## get operation from train graph
-            # train_op, accuracy, auc, global_step, lr, my_summary_op = train_graph(train_images, train_labels, num_batches_per_epoch)
-            # Check the time for each sess run
             start_time = time.time()
             total_loss, global_step_count, accuracy_value, learning_rate, auc_label, auc_prob, log_loss = sess.run([train_op, global_step, accuracy, lr, train_label, probability, origin_loss])
             time_elapsed = time.time() - start_time

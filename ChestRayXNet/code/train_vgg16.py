@@ -6,7 +6,7 @@ from tensorflow.contrib.framework.python.ops.variables import get_or_create_glob
 from tensorflow.python.platform import tf_logging as logging
 
 from sklearn.metrics import roc_auc_score
-import inception_preprocessing
+import data_preproces
 from data_prepare import get_split, load_batch
 from vgg import vgg_16, vgg_arg_scope
 from custlearningrate import CustLearningRate
