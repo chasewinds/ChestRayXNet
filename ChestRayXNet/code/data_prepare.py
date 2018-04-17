@@ -95,8 +95,8 @@ def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_train
         dataset,
         num_readers=40,
         shuffle=True,
-        common_queue_capacity = 64 + 32 * batch_size,
-        common_queue_min = 16 * batch_size)
+        common_queue_capacity = 64 + 16 * batch_size,
+        common_queue_min = 8 * batch_size)
         # common_queue_min = 64)
 
     #Obtain the raw image using the get method
@@ -121,8 +121,8 @@ def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_train
     images, raw_images, labels = tf.train.shuffle_batch(
         [image, raw_image, label],
         batch_size = batch_size,
-        capacity = 32 * batch_size,
-        min_after_dequeue=16 * batch_size,
+        capacity = 16 * batch_size,
+        min_after_dequeue=8 * batch_size,
         num_threads = 32,
         allow_smaller_final_batch = True)
 
