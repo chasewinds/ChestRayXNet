@@ -67,9 +67,9 @@ def epoch_auc(label, prob, num_class):
     return auc_arr
 
 def write_log(loss_arr, auc_arr, txt_path):
-    lesion = [Atelectasis, Cardiomegaly, Effusion, Infiltration,
-              Mass, Nodule, Pneumonia, Pneumothorax, Consolidation,
-              Edema, Emphysema, Fibrosis, Pleural_Thickening, Hernia]
+    lesion = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration',
+              'Mass', 'Nodule', 'Pneumonia', 'Pneumothorax', 'Consolidation',
+              'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
     with open(txt_path) as f:
         for i in range(len(loss_arr)):
             f.write("The mean loss before Epoch %s, is %s" % i + 1, loss_arr[i])
@@ -232,7 +232,7 @@ def run():
                     val_prob_arr = []
                     val_loss_arr = []
                     val_acc_arr = []
-                    for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
+                    for i in xrange(val_num_batches_per_epoch / 10): ## ok, I just want it run faster!
                         loss_values, accuracy_values, batch_label, batch_prob = val_step(sess, val_loss, val_accuracy, val_labels, val_probabilities)
                         # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
                         batch_mean_loss = float(loss_values) / FLAGS.batch_size
