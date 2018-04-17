@@ -117,11 +117,12 @@ def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_train
     raw_image = tf.squeeze(raw_image)
 
     #Batch up the image by enqueing the tensors internally in a FIFO queue and dequeueing many elements with tf.train.batch.
-    images, raw_images, labels = tf.train.batch(
+    images, raw_images, labels = tf.train.shuffle_batch(
         [image, raw_image, label],
         batch_size = batch_size,
-        num_threads = 10,
-        capacity = 10 * batch_size,
+        capacity = 8 * batch_size,
+        min_after_dequeue=4 * batch_size,
+        num_threads = 8,
         allow_smaller_final_batch = True)
 
     return images, raw_images, labels
