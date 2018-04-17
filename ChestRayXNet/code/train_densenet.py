@@ -161,7 +161,7 @@ def run():
             # return loss, accuracy
 
         # Now finally create all the summaries you need to monitor and group them into one summary op.
-        tf.summary.scalar('losses/Total_Loss', loss)
+        tf.summary.scalar('losses/Total_Loss', total_loss)
         tf.summary.scalar('accuracy', accuracy)
         tf.summary.scalar('learning_rate', lr)
         tf.summary.scalar('val_losses', val_loss)
