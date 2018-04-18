@@ -21,8 +21,8 @@ def _conv(inputs, num_filters, kernel_size, stride=1, dropout_rate=None,
           scope=None, outputs_collections=None):
   with tf.variable_scope(scope, 'xx', [inputs]) as sc:
     net = slim.batch_norm(inputs)
-    net = tf.nn.elu(net)
-    net = slim.conv2d(net, num_filters, kernel_size, activation_fn=tf.nn.elu)
+    net = tf.nn.relu(net)
+    net = slim.conv2d(net, num_filters, kernel_size, activation_fn=tf.nn.relu)
 
     if dropout_rate:
       net = tf.nn.dropout(net)
@@ -117,9 +117,9 @@ def densenet(inputs,
       net = inputs
 
       # initial convolution
-      net = slim.conv2d(net, num_filters, 7, stride=2, activation_fn=tf.nn.elu, scope='conv1')
+      net = slim.conv2d(net, num_filters, 7, stride=2, activation_fn=tf.nn.relu, scope='conv1')
       net = slim.batch_norm(net)
-      net = tf.nn.elu(net)
+      net = tf.nn.relu(net)
       net = slim.max_pool2d(net, 3, stride=2, padding='SAME')
 
       # blocks
@@ -142,7 +142,7 @@ def densenet(inputs,
       # final blocks
       with tf.variable_scope('final_block', [inputs]):
         net = slim.batch_norm(net)
-        net = tf.nn.elu(net)
+        net = tf.nn.relu(net)
         net = _global_avg_pool2d(net, scope='global_avg_pool')
 
       net = slim.conv2d(net, num_classes, 1,
