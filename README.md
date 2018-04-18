@@ -1,3 +1,4 @@
+# Diagnosis of pulmonary disease based on NIH Chest_x_ray14 Dataset
 This project is a Chest X Ray Image classification algorithm build on NIH chest_ray_14 dataset<br />
 The baseline model is based on CheXNet published by Andrew Ng el, the paper is here: https://arxiv.org/pdf/1711.05225.pdf <br />
 Quick Start:<br />
