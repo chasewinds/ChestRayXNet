@@ -66,6 +66,18 @@ def epoch_auc(label, prob, num_class):
         auc_arr.append([i, roc_auc_score(epoch_total_label, epoch_total_pos_prob)])
     return auc_arr
 
+def one_cycle_lr(step_one_epoch_n, step_two_epoch_n, min_lr, max_lr, step_two_decay):
+    epochs_lr = []
+    step_change = (max_lr - min_lr) / float(step_one_epoch_n / 2.0) # two step
+    # 0.001 - 0.0001 = 0.0009 0.0009 / 50 = 0.000018
+        for i in range(1, step_one_epoch_n):
+            if i < step_one_epoch_n + 1:
+                epochs_lr.append([i, min_lr + step_change * (i - 1)])
+            else:
+                epochs_lr.append([i, max_lr - step_change * (i - (step_one_epoch_n + 1))])
+        for i in range(1, step_two_epoch_n):
+            epochs_lr.append([i, min_lr * step_two_decay * i])
+
 def write_log(loss_arr, auc_arr, txt_path):
     lesion = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration',
               'Mass', 'Nodule', 'Pneumonia', 'Pneumothorax', 'Consolidation',
@@ -135,16 +147,23 @@ def run():
         #              [50, 0.001],
         #              [50, 0.0001],
         #              [50, 0.00001]]
-        epochs_lr = [[70, 0.001],
-                     [17, 0.0001],
-                     [50, 0.00001],
-                     [50, 0.000001]]
+        # use one cycle learning rate stratege
+        # epochs_lr = [[1, 0.0001],
+        #              [10, 0.0002],
+        #              [20, 0.0004],
+        #              [30, 0.0006],
+        #              [40,0.0008],
+        #              [50, 0.001],
+        #              [],
+        #              [],
+        #              [100, 0.0001]]
+        epochs_lr = one_cycle_lr(step_one_epoch_n=10, step_two_epoch_n=10, min_lr=0.0001, max_lr=0.001, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
 
         # Now we can define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.00001, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # Create the train_op.
         train_op = slim.learning.create_train_op(total_loss, optimizer)
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
@@ -206,12 +225,12 @@ def run():
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
-        # def restore_fn(sess):
-            # return saver.restore(sess, FLAGS.checkpoint_file)
+        def restore_fn(sess):
+            return saver.restore(sess, FLAGS.checkpoint_file)
 
         # Define your supervisor for running a managed session. Do not run the summary_op automatically or else it will consume too much memory
-        # sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None, init_fn=restore_fn)
-        sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None)
+        sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None, init_fn=restore_fn)
+        # sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None)
         #Run the managed session
         with sv.managed_session() as sess:
             total_val_loss = []
