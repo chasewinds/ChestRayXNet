@@ -70,7 +70,7 @@ def one_cycle_lr(step_one_epoch_n, step_two_epoch_n, min_lr, max_lr, step_two_de
     epochs_lr = []
     step_change = (max_lr - min_lr) / float(step_one_epoch_n / 2.0) # two step
     # 0.001 - 0.0001 = 0.0009 0.0009 / 50 = 0.00001 8
-    for i in range(1, float(step_one_epoch_n / 2.0)):
+    for i in range(1, int(step_one_epoch_n / 2.0)):
         if i < step_one_epoch_n + 1:
             epochs_lr.append([i, min_lr + step_change * (i - 1)])
         else:
