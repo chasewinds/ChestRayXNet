@@ -69,8 +69,8 @@ def epoch_auc(label, prob, num_class):
 def one_cycle_lr(step_one_epoch_n, step_two_epoch_n, min_lr, max_lr, step_two_decay):
     epochs_lr = []
     step_change = (max_lr - min_lr) / float(step_one_epoch_n / 2.0) # two step
-    # 0.001 - 0.0001 = 0.0009 0.0009 / 50 = 0.000018
-    for i in range(1, step_one_epoch_n):
+    # 0.001 - 0.0001 = 0.0009 0.0009 / 50 = 0.00001 8
+    for i in range(1, float(step_one_epoch_n / 2.0)):
         if i < step_one_epoch_n + 1:
             epochs_lr.append([i, min_lr + step_change * (i - 1)])
         else:
@@ -158,7 +158,7 @@ def run():
         #              [],
         #              [],
         #              [100, 0.0001]]
-        epochs_lr = one_cycle_lr(step_one_epoch_n=10, step_two_epoch_n=10, min_lr=0.0001, max_lr=0.001, step_two_decay=0.1)
+        epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
