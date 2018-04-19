@@ -77,6 +77,7 @@ def one_cycle_lr(step_one_epoch_n, step_two_epoch_n, min_lr, max_lr, step_two_de
             epochs_lr.append([i, max_lr - step_change * (i - (step_one_epoch_n + 1))])
     for i in range(1, step_two_epoch_n):
         epochs_lr.append([i, min_lr * step_two_decay * i])
+    return epochs_lr
 
 def write_log(loss_arr, auc_arr, txt_path):
     lesion = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration',
