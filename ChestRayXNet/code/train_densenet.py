@@ -134,7 +134,7 @@ def run():
         # cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
         # loss = cross_entropy_loss
         binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits)
-        total_loss = tf.reduce_sum(binary_crossentropy)
+        total_loss = tf.reduce_sum(binary_crossentropy, 1)
         # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
         # total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
         # total_loss = tf.reduce_mean(total_loss)
@@ -181,7 +181,7 @@ def run():
         # val_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
         # val_loss = tf.reduce_mean(val_loss)
         val_binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits)
-        val_loss = tf.reduce_sum(val_binary_crossentropy)
+        val_loss = tf.reduce_sum(val_binary_crossentropy, 1)
 
         val_lesion_pred = tf.cast(tf.greater_equal(val_probabilities, 0.5), tf.float32)
         val_accuracy = tf.reduce_mean(tf.cast(tf.equal(val_lesion_pred, val_labels), tf.float32))
