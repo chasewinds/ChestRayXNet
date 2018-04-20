@@ -33,7 +33,7 @@ class CustLearningRate:
 	@classmethod
 	def IntervalLearningRate(cls, epochs_lr, global_step, steps_per_epoch):
 		a = [x[0] for x in epochs_lr]
-		epochs_invervals = map(lambda i: sum(a[:i+1]),  range(len(a)))
+		epochs_invervals = map(lambda i: sum(a[:i+1]), range(len(a)))
 		lr_list = [x[1] for x in epochs_lr]
 		logging.info("epochs_invervals: %s, lr_list: %s" % (epochs_invervals, lr_list))
 

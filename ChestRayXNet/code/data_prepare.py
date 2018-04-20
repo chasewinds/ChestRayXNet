@@ -107,6 +107,7 @@ def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_train
     if one_hot:
         label = tf.cast(label, tf.int32)
         label = tf.one_hot(label, depth=2)
+    
     # logging.info('line 179: after set_shape([14]), label shape is: %s' % tf.shape(label))
 
     #Perform the correct preprocessing for this image depending if it is training or evaluating
@@ -116,6 +117,14 @@ def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_train
     raw_image = tf.expand_dims(raw_image, 0)
     raw_image = tf.image.resize_nearest_neighbor(raw_image, [height, width])
     raw_image = tf.squeeze(raw_image)
+    # sample_group = tf.group(image, raw_image, label)
+    # sample_rate_metirc = [2, 3, 4]
+    # for i in range(len(sample_rate_metirc)):
+    #     if tf.slice(label, i, 1) == '1':
+    #         for i in range(sample_rate_metirc[i]):
+    # a container required for sampling
+    
+                
 
     #Batch up the image by enqueing the tensors internally in a FIFO queue and dequeueing many elements with tf.train.batch.
     images, raw_images, labels = tf.train.shuffle_batch(

@@ -10,6 +10,7 @@ from sklearn.metrics import roc_auc_score
 import data_preproces
 from data_prepare import get_split, load_batch
 from densenet_elu import densenet121, densenet161, densenet_arg_scope
+from vgg import vgg_16, vgg_arg_scope
 from custlearningrate import CustLearningRate
 slim = tf.contrib.slim
 
@@ -125,6 +126,12 @@ def run():
 
             # Define the scopes that you want to exclude for restoration
             exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
+            variables_to_restore = slim.get_variables_to_restore(exclude=exclude)    
+
+        elif FLAGS.model_type == 'vgg16':
+            with slim.arg_scope(vgg_arg_scope()):
+                logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
+            exclude = ['vgg_16/fc8'] # don't fine tuning the last layer.
             variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
         ## convert into probabilities
@@ -159,10 +166,10 @@ def run():
         #              [],
         #              [],
         #              [100, 0.0001]]
-        epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
-        lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
-                                                   global_step=global_step,
-                                                   steps_per_epoch=num_batches_per_epoch)
+        # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
+        # lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
+        #                                            global_step=global_step,
+        #                                            steps_per_epoch=num_batches_per_epoch)
 
         # Now we can define the optimizer that takes on the learning rate
         optimizer = tf.train.AdamOptimizer(learning_rate=0.0003, beta1=0.9, beta2=0.999, epsilon=1e-8)
@@ -174,6 +181,11 @@ def run():
         if FLAGS.model_type == 'densenet121':
             with slim.arg_scope(densenet_arg_scope()):
                 val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
+
+        elif FLAGS.model_type == 'vgg16':
+            with slim.arg_scope(vgg_arg_scope()):
+                val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
+
         val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
@@ -196,7 +208,7 @@ def run():
         my_summary_op = tf.summary.merge_all()
 
 
-        #Now we need to create a training step function that runs both the train_op, metrics_op and updates the global_step concurrently.
+        # Now we need to create a training step function that runs both the train_op, metrics_op and updates the global_step concurrently.
         def train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_label, probability, origin_loss):
             '''
             Simply runs a session for the three arguments provided and gives a logging on the time elapsed for each global step
