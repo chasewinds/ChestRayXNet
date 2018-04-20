@@ -8,8 +8,8 @@ python code/train_densenet.py \
     --log_dir 'log/dense121' \
     --log_txt_path 'log/dense121/validation_log.txt' \
     --image_label_list 'data/list/14muti/label_lesion.txt' \
-    --model_type 'densenet121' \
-    --checkpoint_file 'model/dense121/tf-densenet121.ckpt' \
+    --model_type 'vgg16' \
+    --checkpoint_file 'model/vgg16/vgg_16.ckpt' \
     --num_classes 14 \
     --num_epoch 1000 \
     --batch_size 16 \
