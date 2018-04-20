@@ -50,7 +50,7 @@ flags.DEFINE_integer('batch_size', 16, 'Int, Number of images in a single mini b
 
 flags.DEFINE_integer('step_size', 20, 'Int, Number of epoch your network run before apply a weight decay operator')
 
-flags.DEFINE_float('learning_rate', 0.0002, 'Float, Set the learning rate of your network')
+flags.DEFINE_float('learning_rate', 0.0003, 'Float, Set the learning rate of your network')
 
 flags.DEFINE_float('lr_decay_factor', 0.7, 'Float, Set the decay factor every time you decay your learning rate')
 
