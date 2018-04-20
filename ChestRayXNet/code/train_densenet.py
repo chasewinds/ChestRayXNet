@@ -131,12 +131,13 @@ def run():
         probabilities = tf.sigmoid(logits)
        ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
-        cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
+        # cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
         # loss = cross_entropy_loss
-        loss = tf.reduce_mean(cross_entropy_loss)
-        l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
-        total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
-        total_loss = tf.reduce_mean(total_loss)
+        binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits)
+        total_loss = tf.reduce_sum(binary_crossentropy)
+        # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
+        # total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
+        # total_loss = tf.reduce_mean(total_loss)
 
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
@@ -164,7 +165,7 @@ def run():
                                                    steps_per_epoch=num_batches_per_epoch)
 
         # Now we can define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.AdamOptimizer(learning_rate=0.0003, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # Create the train_op.
         train_op = slim.learning.create_train_op(total_loss, optimizer)
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
@@ -177,15 +178,17 @@ def run():
 
         ## new loss, just equal to the sum of 14 log loss
         # val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
-        val_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
-        val_loss = tf.reduce_mean(val_loss)
+        # val_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
+        # val_loss = tf.reduce_mean(val_loss)
+        val_binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits)
+        val_loss = tf.reduce_sum(val_binary_crossentropy)
 
         val_lesion_pred = tf.cast(tf.greater_equal(val_probabilities, 0.5), tf.float32)
         val_accuracy = tf.reduce_mean(tf.cast(tf.equal(val_lesion_pred, val_labels), tf.float32))
             # return loss, accuracy
 
         # Now finally create all the summaries you need to monitor and group them into one summary op.
-        tf.summary.scalar('losses/Total_Loss', loss)
+        tf.summary.scalar('losses/Total_Loss', total_loss)
         tf.summary.scalar('accuracy', accuracy)
         tf.summary.scalar('learning_rate', lr)
         tf.summary.scalar('val_losses', val_loss)
@@ -239,7 +242,7 @@ def run():
             epoch_loss = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 ## run a train step
-                batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probabilities, loss)
+                batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probabilities, total_loss)
                 epoch_loss.append(batch_loss)
                 #At the start of every epoch, show some global informations and run validation set once:
                 if step % num_batches_per_epoch == 0:
