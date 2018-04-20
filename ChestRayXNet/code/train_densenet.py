@@ -193,7 +193,7 @@ def run():
         # val_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
         # val_loss = tf.reduce_mean(val_loss)
         val_binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits)
-        val_loss = tf.reduce_mean(val_binary_crossentropy, 1)
+        val_loss = tf.reduce_mean(val_binary_crossentropy)
 
         val_lesion_pred = tf.cast(tf.greater_equal(val_probabilities, 0.5), tf.float32)
         val_accuracy = tf.reduce_mean(tf.cast(tf.equal(val_lesion_pred, val_labels), tf.float32))
