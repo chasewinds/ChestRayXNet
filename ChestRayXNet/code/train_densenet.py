@@ -166,10 +166,10 @@ def run():
         #              [],
         #              [],
         #              [100, 0.0001]]
-        # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
-        # lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
-        #                                            global_step=global_step,
-        #                                            steps_per_epoch=num_batches_per_epoch)
+        epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
+        lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
+                                                   global_step=global_step,
+                                                   steps_per_epoch=num_batches_per_epoch)
 
         # Now we can define the optimizer that takes on the learning rate
         optimizer = tf.train.AdamOptimizer(learning_rate=0.0003, beta1=0.9, beta2=0.999, epsilon=1e-8)
