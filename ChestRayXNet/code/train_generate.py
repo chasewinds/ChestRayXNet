@@ -121,7 +121,7 @@ def run():
         probabilities = tf.sigmoid(logits)
         ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
-        loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits))
+        loss = tf.reduce_mean(cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9))
         # loss = tf.reduce_mean(loss)
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
