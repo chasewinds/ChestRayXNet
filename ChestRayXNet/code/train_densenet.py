@@ -66,7 +66,7 @@ def epoch_auc(label, prob, num_class):
         epoch_total_label = [y[i] for x in label for y in x]
         epoch_total_pos_prob = [y[i] for x in prob for y in x]
         try:
-            auc_arr.append([i, roc_auc_score(epoch_total_label, epoch_total_pos_prob)])
+            auc_arr.append([i, round(roc_auc_score(epoch_total_label, epoch_total_pos_prob), 2)])
         except:
             continue
     return auc_arr
@@ -150,7 +150,7 @@ def run():
         {0: 0.030201599754474135, 1: 0.9697984002455259}, {0: 0.002004488519747569, 1: 0.9979955114802525}]"""
         # weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
         # total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
-        cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=10)
+        cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9)
         # weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
         # def weighted_cross_entropy(logits, labels):
         #     predictions = tf.sigmoid(logits)
@@ -249,7 +249,7 @@ def run():
                 sub_prob = [x[i] for x in auc_prob]
                 sub_label = [x[i] for x in auc_label]
                 try:
-                    auc.append([i, roc_auc_score(sub_label, sub_prob)])
+                    auc.append([i, round(roc_auc_score(sub_label, sub_prob), 2)])
                 except:
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
@@ -266,7 +266,7 @@ def run():
                 sub_prob = [x[i] for x in prob]
                 sub_label = [x[i] for x in label]
                 try:
-                    auc.append([i, roc_auc_score(sub_label, sub_prob)])
+                    auc.append([i, round(roc_auc_score(sub_label, sub_prob), 2)])
                 except:
                     continue
             logging.info('AUC on this validation batch is : %s' % auc)
