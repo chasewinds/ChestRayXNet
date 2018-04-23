@@ -289,7 +289,7 @@ def run():
                     val_prob_arr = []
                     val_loss_arr = []
                     val_acc_arr = []
-                    for i in xrange(val_num_batches_per_epoch / 10): ## ok, I just want it run faster!
+                    for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
                         loss_values, accuracy_values, batch_label, batch_prob = val_step(sess, 
                         val_loss, val_accuracy, val_labels, val_probabilities)
                         # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
