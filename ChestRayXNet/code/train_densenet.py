@@ -150,7 +150,7 @@ def run():
         {0: 0.030201599754474135, 1: 0.9697984002455259}, {0: 0.002004488519747569, 1: 0.9979955114802525}]"""
         # weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
         # total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
-        cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9)
+        cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=10)
         # weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
         # def weighted_cross_entropy(logits, labels):
         #     predictions = tf.sigmoid(logits)
@@ -175,10 +175,11 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        # epochs_lr = [[50, 0.01],
-        #              [50, 0.001],
-        #              [50, 0.0001],
-        #              [50, 0.00001]]
+        epochs_lr = [[20, 0.001],
+                     [10, 0.0001],
+                     [10, 0.00001],
+                     [10, 0.000001],
+                     [10, 0.0000001]]
         # use one cycle learning rate stratege
         # epochs_lr = [[1, 0.0001],
         #              [10, 0.0002],
@@ -189,13 +190,13 @@ def run():
         #              [],
         #              [],
         #              [100, 0.0001]]
-        epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
+        # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
 
         # Now we can define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # Create the train_op.
         train_op = slim.learning.create_train_op(total_loss, optimizer)
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
