@@ -176,10 +176,10 @@ def run():
         global_step = get_or_create_global_step()
 
         epochs_lr = [[10, 0.0001],
-                     [10, 0.0001],
                      [10, 0.00001],
                      [10, 0.000001],
-                     [10, 0.0000001]]
+                     [10, 0.0000001],
+                     [10, 0.00000001]]
         # use one cycle learning rate stratege
         # epochs_lr = [[1, 0.0001],
         #              [10, 0.0002],
