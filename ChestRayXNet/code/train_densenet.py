@@ -136,12 +136,20 @@ def run():
 
         ## convert into probabilities
         probabilities = tf.sigmoid(logits)
-       ## new loss, just equal to the sum of 14 log loss
-        # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
+        ## new loss, just equal to the sum of 14 log 
+        """[{0: 0.1032743176107264, 1: 0.8967256823892736}, {0: 0.024590950070013235, 1: 0.9754090499299868}, 
+        {0: 0.11874436537318013, 1: 0.8812556346268199}, {0: 0.17674026048759903, 1: 0.823259739512401}, 
+        {0: 0.05132066061803464, 1: 0.9486793393819654}, {0: 0.05654767613603667, 1: 0.9434523238639633}, 
+        {0: 0.012736654326434312, 1: 0.9872633456735657}, {0: 0.04782958970325897, 1: 0.952170410296741}, 
+        {0: 0.04120230947768208, 1: 0.9587976905223179}, {0: 0.020505246197226323, 1: 0.9794947538027736}, 
+        {0: 0.022826232904302458, 1: 0.9771737670956976}, {0: 0.015076822741833388, 1: 0.9849231772581666}, 
+        {0: 0.030201599754474135, 1: 0.9697984002455259}, {0: 0.002004488519747569, 1: 0.9979955114802525}]"""
+        weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
+        total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
         # cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
         # loss = cross_entropy_loss
-        binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
-        total_loss = tf.reduce_mean(binary_crossentropy)
+        # binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
+        # total_loss = tf.reduce_mean(binary_crossentropy)
         # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
         # total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
         # total_loss = tf.reduce_mean(total_loss)
@@ -266,7 +274,7 @@ def run():
                     val_prob_arr = []
                     val_loss_arr = []
                     val_acc_arr = []
-                    for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
+                    for i in xrange(val_num_batches_per_epoch / 10): ## ok, I just want it run faster!
                         loss_values, accuracy_values, batch_label, batch_prob = val_step(sess, 
                         val_loss, val_accuracy, val_labels, val_probabilities)
                         # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
