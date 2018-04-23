@@ -147,7 +147,10 @@ def run():
         weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
         # total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
         cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
-        weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
+        # weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
+        def mutl_weight(elems):
+            return tf.multiply(elems, weights)
+        weighted_loss = tf.map_fn(mutl_weight, cross_entropy_loss)
         total_loss = tf.reduce_mean(weighted_loss)
         # binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
         # total_loss = tf.reduce_mean(binary_crossentropy)
