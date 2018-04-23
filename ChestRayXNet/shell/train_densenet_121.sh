@@ -12,7 +12,7 @@ python code/train_densenet.py \
     --checkpoint_file 'model/dense121/tf-densenet121.ckpt' \
     --num_classes 14 \
     --num_epoch 1000 \
-    --batch_size 16 \
+    --batch_size 64 \
     --step_size 50 \
     --learning_rate 0.01 \
     --lr_decay_factor 0.1 \
