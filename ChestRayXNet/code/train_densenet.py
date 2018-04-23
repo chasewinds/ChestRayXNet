@@ -145,9 +145,10 @@ def run():
         {0: 0.022826232904302458, 1: 0.9771737670956976}, {0: 0.015076822741833388, 1: 0.9849231772581666}, 
         {0: 0.030201599754474135, 1: 0.9697984002455259}, {0: 0.002004488519747569, 1: 0.9979955114802525}]"""
         weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
-        total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
-        # cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
-        # loss = cross_entropy_loss
+        # total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
+        cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
+        weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
+        total_loss = tf.reduce_mean(weighted_loss)
         # binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
         # total_loss = tf.reduce_mean(binary_crossentropy)
         # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
