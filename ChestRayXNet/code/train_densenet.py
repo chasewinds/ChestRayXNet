@@ -4,6 +4,7 @@ import random
 
 import tensorflow as tf
 from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
+from tensorflow.python.ops import math_ops
 from tensorflow.python.platform import tf_logging as logging
 
 from sklearn.metrics import roc_auc_score
@@ -64,7 +65,10 @@ def epoch_auc(label, prob, num_class):
     for i in range(num_class):
         epoch_total_label = [y[i] for x in label for y in x]
         epoch_total_pos_prob = [y[i] for x in prob for y in x]
-        auc_arr.append([i, roc_auc_score(epoch_total_label, epoch_total_pos_prob)])
+        try:
+            auc_arr.append([i, roc_auc_score(epoch_total_label, epoch_total_pos_prob)])
+        except:
+            continue
     return auc_arr
 
 def one_cycle_lr(step_one_epoch_n, step_two_epoch_n, min_lr, max_lr, step_two_decay):
@@ -144,14 +148,21 @@ def run():
         {0: 0.04120230947768208, 1: 0.9587976905223179}, {0: 0.020505246197226323, 1: 0.9794947538027736}, 
         {0: 0.022826232904302458, 1: 0.9771737670956976}, {0: 0.015076822741833388, 1: 0.9849231772581666}, 
         {0: 0.030201599754474135, 1: 0.9697984002455259}, {0: 0.002004488519747569, 1: 0.9979955114802525}]"""
-        weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
+        # weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
         # total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
-        cross_entropy_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=train_labels, logits=logits)
+        cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9)
         # weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
-        def mutl_weight(elems):
-            return tf.multiply(elems, weights)
-        weighted_loss = tf.map_fn(mutl_weight, cross_entropy_loss)
-        total_loss = tf.reduce_mean(weighted_loss)
+        # def weighted_cross_entropy(logits, labels):
+        #     predictions = tf.sigmoid(logits)
+        #     def one_binary_loss(logit, label, weight):
+        #         return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) * weight[1] - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon)) * weight[0]
+        #     loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply(
+        #     (1 - labels), math_ops.log(1 - predictions + epsilon))
+            
+        #     return tf.multiply(elems, weights)
+        # loss_input = tf.group(logits, train_labels)
+        # weighted_loss = tf.map_fn(weighted_binary_crossentropy, loss_input)
+        total_loss = tf.reduce_mean(cross_entropy_loss)
         # binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
         # total_loss = tf.reduce_mean(binary_crossentropy)
         # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
