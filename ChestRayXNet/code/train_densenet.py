@@ -260,6 +260,15 @@ def run():
             # images, labels, _ = load_batch_from_tfrecord('val')
             # loss, accuracy = val_graph(val_images, val_labels)
             loss_value, accuracy_value, label, prob = sess.run([validation_loss, validation_accuracy, val_label, val_probability])
+            auc = []
+            for i in range(FLAGS.num_classes):
+                sub_prob = [x[i] for x in prob]
+                sub_label = [x[i] for x in label]
+                try:
+                    auc.append([i, roc_auc_score(sub_label, sub_prob)])
+                except:
+                    continue
+            logging.info('AUC on this validation batch is : %s' % auc)
             return loss_value, accuracy_value, label, prob
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
