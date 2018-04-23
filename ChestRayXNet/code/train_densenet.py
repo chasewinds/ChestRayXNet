@@ -150,7 +150,7 @@ def run():
         {0: 0.030201599754474135, 1: 0.9697984002455259}, {0: 0.002004488519747569, 1: 0.9979955114802525}]"""
         # weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
         # total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
-        cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9)
+        cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=10)
         # weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
         # def weighted_cross_entropy(logits, labels):
         #     predictions = tf.sigmoid(logits)
