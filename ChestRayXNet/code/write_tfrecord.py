@@ -1,6 +1,7 @@
 import random
 import tensorflow as tf
-from dataset_utils import _dataset_exists, _get_image_label, _convert_dataset, read_label_file
+# from dataset_utils import _dataset_exists, _get_image_label, _convert_dataset, read_label_file
+from dataset_utils_string_label import _dataset_exists, _get_image_label, _convert_dataset, read_label_file
 import logging
 # from mlog import initlog
 
@@ -51,6 +52,8 @@ def main():
     logging.debug("train_image: %s, train_label: %s", train_image[:10], train_label[:10])
     val_image, val_label = _get_image_label(read_label_file(FLAGS.dataset_dir, FLAGS.val_list))
     logging.debug("val_image: %s, val_label: %s", val_image[:10], val_label[:10])
+    test_image, test_label = _get_image_label(read_label_file(FLAGS.dataset_dir, FLAGS.test_list))
+    logging.debug("test_image: %s, test_label: %s", test_image[:10], test_label[:10])
 
 
     #Refer each of the class name to a specific integer number for predictions later
@@ -71,6 +74,8 @@ def main():
     _convert_dataset('train', train_image, train_label,
                      dataset_dir = FLAGS.dataset_dir, write_dir= FLAGS.write_dir, tfrecord_filename = FLAGS.tfrecord_filename, _NUM_SHARDS = FLAGS.num_shards)
     _convert_dataset('validation', val_image, val_label,
+                     dataset_dir = FLAGS.dataset_dir,  write_dir= FLAGS.write_dir, tfrecord_filename = FLAGS.tfrecord_filename, _NUM_SHARDS = FLAGS.num_shards)
+    _convert_dataset('test', test_image, test_label,
                      dataset_dir = FLAGS.dataset_dir,  write_dir= FLAGS.write_dir, tfrecord_filename = FLAGS.tfrecord_filename, _NUM_SHARDS = FLAGS.num_shards)
 
     # Finally, write the labels file:
