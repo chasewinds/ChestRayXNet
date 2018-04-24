@@ -12,7 +12,7 @@ python code/train_pneumonia.py \
     --checkpoint_file 'model/dense121/tf-densenet121.ckpt' \
     --num_classes 1 \
     --num_epoch 100 \
-    --batch_size 16 \
+    --batch_size 64 \
     --step_size 15 \
     --learning_rate 0.001 \
     --lr_decay_factor 0.1 \
