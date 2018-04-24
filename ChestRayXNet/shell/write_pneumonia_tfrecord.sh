@@ -6,7 +6,6 @@ python code/write_tfrecord.py \
     --write_dir 'data/tfrecord/pneumonia' \
     --train_list 'data/list/pneumonia/train.txt' \
     --val_list 'data/list/pneumonia/val.txt' \
-    --test_list 'data/list/pneumonia/test.txt' \
     --num_shards 3 \
     --random_seed 1314 \
     --tfrecord_filename 'pneumonia'
