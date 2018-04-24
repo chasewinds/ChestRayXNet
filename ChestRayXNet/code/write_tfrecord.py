@@ -18,6 +18,8 @@ flags.DEFINE_string('train_list', None, 'String: The training sample filename li
 
 flags.DEFINE_string('val_list', None, 'String, The validation sample filename list')
 
+flags.DEFINE_string('test_list', None, 'String, The test sample filename list')
+
 # The number of shards to split the dataset into
 flags.DEFINE_integer('num_shards', 2, 'Int: Number of shards to split the TFRecord files')
 
