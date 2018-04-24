@@ -85,17 +85,14 @@ def one_cycle_lr(step_one_epoch_n, step_two_epoch_n, min_lr, max_lr, step_two_de
     return epochs_lr
 
 def write_log(loss_arr, auc_arr, txt_path):
-    lesion = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration',
-              'Mass', 'Nodule', 'Pneumonia', 'Pneumothorax', 'Consolidation',
-              'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
+    lesion = ['Pneumonia']
     with open(txt_path, 'w') as f:
         for i in range(len(loss_arr)):
             f.write("The mean loss before Epoch %s, is %s\n" % (i + 1, loss_arr[i]))
             sample_auc = auc_arr[i]
             # lesion_auc = [[lesion[j], sample_auc[j]] for j in range(len(lesion))]
             # f.write("The AUC value of each sub class before Epoch %s, is: %s\n" % (i + 1, lesion_auc))
-            for j in range(len(lesion)):
-                f.write('%s : %s\n' % (lesion[j], sample_auc[j][1]))
+            f.write('%s : %s\n' % (lesion, sample_auc[1]))
             f.write('\n')
 
 def run():
@@ -140,28 +137,6 @@ def run():
 
         ## convert into probabilities
         probabilities = tf.sigmoid(logits)
-        ## new loss, just equal to the sum of 14 log 
-        """[{0: 0.1032743176107264, 1: 0.8967256823892736}, {0: 0.024590950070013235, 1: 0.9754090499299868}, 
-        {0: 0.11874436537318013, 1: 0.8812556346268199}, {0: 0.17674026048759903, 1: 0.823259739512401}, 
-        {0: 0.05132066061803464, 1: 0.9486793393819654}, {0: 0.05654767613603667, 1: 0.9434523238639633}, 
-        {0: 0.012736654326434312, 1: 0.9872633456735657}, {0: 0.04782958970325897, 1: 0.952170410296741}, 
-        {0: 0.04120230947768208, 1: 0.9587976905223179}, {0: 0.020505246197226323, 1: 0.9794947538027736}, 
-        {0: 0.022826232904302458, 1: 0.9771737670956976}, {0: 0.015076822741833388, 1: 0.9849231772581666}, 
-        {0: 0.030201599754474135, 1: 0.9697984002455259}, {0: 0.002004488519747569, 1: 0.9979955114802525}]"""
-        # weights = tf.constant([0.896, 0.975, 0.881, 0.823, 0.948, 0.943, 0.987, 0.952, 0.958, 0.979, 0.977, 0.984, 0.969, 0.997], dtype=tf.float32)
-        # cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9)
-        # weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
-        # def weighted_cross_entropy(logits, labels):
-        #     predictions = tf.sigmoid(logits)
-        #     def one_binary_loss(logit, label, weight):
-        #         return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) * weight[1] - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon)) * weight[0]
-        #     loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply(
-        #     (1 - labels), math_ops.log(1 - predictions + epsilon))
-            
-        #     return tf.multiply(elems, weights)
-        # loss_input = tf.group(logits, train_labels)
-        # weighted_loss = tf.map_fn(weighted_binary_crossentropy, loss_input)
-        # total_loss = tf.reduce_mean(cross_entropy_loss)
         def weighted_cross_entropy(logits, labels):
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
