@@ -97,7 +97,6 @@ def write_log(loss_arr, auc_arr, txt_path):
 
 def run():
     image_size = 224
-    #Create the log directory here. Must be done here otherwise import will activate this unneededly.
     if not os.path.exists(FLAGS.log_dir):
         os.mkdir(FLAGS.log_dir)
     #======================= TRAINING PROCESS =========================
