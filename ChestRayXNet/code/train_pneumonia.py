@@ -140,8 +140,8 @@ def run():
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
             epsilon = 1e-8
-            loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*1 - math_ops.multiply(
-            (1 - labels), math_ops.log(1 - predictions + epsilon))*1
+            loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*0.5 - math_ops.multiply(
+            (1 - labels), math_ops.log(1 - predictions + epsilon))*0.5
             return loss
         binary_crossentropy = weighted_cross_entropy(logits, train_labels)
         total_loss = tf.reduce_mean(binary_crossentropy)
@@ -160,16 +160,6 @@ def run():
                      [40, 0.0001],
                      [40, 0.00001],
                      [20, 0.000001]]
-        # use one cycle learning rate stratege
-        # epochs_lr = [[1, 0.0001],
-        #              [10, 0.0002],
-        #              [20, 0.0004],
-        #              [30, 0.0006],
-        #              [40,0.0008],
-        #              [50, 0.001],
-        #              [],
-        #              [],
-        #              [100, 0.0001]]
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
