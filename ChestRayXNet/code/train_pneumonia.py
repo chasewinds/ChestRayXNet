@@ -297,7 +297,7 @@ def run():
                     mean_auc = epoch_auc(val_label_arr, val_prob_arr, FLAGS.num_classes)
                     logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
                     total_val_auc.append(mean_auc)
-                    write_log(total_val_loss, total_val_auc, FLAGS.log_txt_path)
+                    # write_log(total_val_loss, total_val_auc, FLAGS.log_txt_path)
 
                 # Log the summaries every 100 step.
                 if step % 20 == 0:
