@@ -156,9 +156,9 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[20, 0.0003],
-                     [20, 0.0001],
-                     [20, 0.00001],
+        epochs_lr = [[40, 0.0003],
+                     [40, 0.0001],
+                     [40, 0.00001],
                      [20, 0.000001]]
         # use one cycle learning rate stratege
         # epochs_lr = [[1, 0.0001],
