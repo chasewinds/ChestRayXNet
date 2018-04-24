@@ -2,7 +2,7 @@ import random
 import tensorflow as tf
 from dataset_utils import _dataset_exists, _get_image_label, _convert_dataset, read_label_file
 import logging
-from mlog import initlog
+# from mlog import initlog
 
 #====================================================DEFINE YOUR ARGUMENTS=======================================================================
 flags = tf.app.flags
@@ -80,5 +80,5 @@ def main():
     print '\nFinished converting the %s dataset!' % (FLAGS.tfrecord_filename)
 
 if __name__ == "__main__":
-    initlog()
+    # initlog()
     main()
