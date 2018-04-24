@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 export CUDA_VISIBLE_DEVICES=0
 
-python code/train_densenet.py \
+python code/train_pneumonia.py \
     --image_set_dir '/home/rubans/dataset/images' \
     --tfrecord_dir 'data/tfrecord/pneumonia' \
     --tfrecord_prefix 'pneumonia' \
