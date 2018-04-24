@@ -139,6 +139,7 @@ def run():
         def weighted_cross_entropy(logits, labels):
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
+            epsilon = 1e-8
             loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*0.987 - math_ops.multiply(
             (1 - labels), math_ops.log(1 - predictions + epsilon))*0.012
             return loss
