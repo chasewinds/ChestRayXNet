@@ -140,8 +140,8 @@ def run():
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
             epsilon = 1e-8
-            loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*0.987 - math_ops.multiply(
-            (1 - labels), math_ops.log(1 - predictions + epsilon))*0.012
+            loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*1 - math_ops.multiply(
+            (1 - labels), math_ops.log(1 - predictions + epsilon))*1
             return loss
         binary_crossentropy = weighted_cross_entropy(logits, train_labels)
         total_loss = tf.reduce_mean(binary_crossentropy)
@@ -176,7 +176,7 @@ def run():
                                                    steps_per_epoch=num_batches_per_epoch)
 
         # Now we can define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # Create the train_op.
         train_op = slim.learning.create_train_op(total_loss, optimizer)
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
