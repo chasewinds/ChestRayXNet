@@ -140,15 +140,11 @@ def run():
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
             epsilon = 1e-8
-            loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*0.987 - math_ops.multiply(
-            (1 - labels), math_ops.log(1 - predictions + epsilon))*0.012
-            return loss
+            # L(X,y) = −w+·ylogp(Y=1|X) − w−·(1−y)logp(Y =0|X)
+            return -0.987*math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - 0.012*math_ops.multiply(
+            (1 - labels), math_ops.log(1 - predictions + epsilon))
         binary_crossentropy = weighted_cross_entropy(logits, train_labels)
         total_loss = tf.reduce_mean(binary_crossentropy)
-        # binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
-        # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
-        # total_loss = cross_entropy_loss + l2_loss * FLAGS.weight_decay
-        # total_loss = tf.reduce_mean(total_loss)
 
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
@@ -156,10 +152,10 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[15, 0.001],
-                     [15, 0.0001],
-                     [15, 0.00001],
-                     [15, 0.000001]]
+        epochs_lr = [[50, 0.001],
+                     [5, 0.000001],
+                     [5, 0.0000001],
+                     [5, 0.00000001]]
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
