@@ -163,14 +163,14 @@ def run():
         # loss_input = tf.group(logits, train_labels)
         # weighted_loss = tf.map_fn(weighted_binary_crossentropy, loss_input)
         # total_loss = tf.reduce_mean(cross_entropy_loss)
-        def weighted_cross_entropy(logits, labels):
-            predictions = tf.sigmoid(logits)
-            # weight:0: 0.012736654326434312, 1: 0.9872633456735657
-            epsilon = 1e-8
-            loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*0.95 - math_ops.multiply(
-            (1 - labels), math_ops.log(1 - predictions + epsilon))*0.05
-            return loss
-        binary_crossentropy = weighted_cross_entropy(logits, train_labels)
+        # def weighted_cross_entropy(logits, labels):
+        #     predictions = tf.sigmoid(logits)
+        #     # weight:0: 0.012736654326434312, 1: 0.9872633456735657
+        #     epsilon = 1e-8
+        #     loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*0.95 - math_ops.multiply(
+        #     (1 - labels), math_ops.log(1 - predictions + epsilon))*0.05
+        #     return loss
+        binary_crossentropy = tf.div(tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9), 10.0)
         total_loss = tf.reduce_mean(binary_crossentropy)
         # binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
         # total_loss = tf.reduce_mean(binary_crossentropy)
@@ -184,10 +184,10 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[50, 0.0001],
-                     [10, 0.00001],
+        epochs_lr = [[10, 0.00001],
                      [10, 0.000001],
-                     [10, 0.0000001]]
+                     [10, 0.0000001],
+                     [10, 0.00000001]]
         # use one cycle learning rate stratege
         # epochs_lr = [[1, 0.0001],
         #              [10, 0.0002],
