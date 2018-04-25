@@ -156,8 +156,7 @@ def run():
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
             epsilon = 1e-8
-            def one_class_loss(label, logit, prediction):
-                return -math_ops.multiply(label, math_ops.log(prediction + epsilon)) - math_ops.multiply((1 - label), math_ops.log(1 - prediction + epsilon))
+            return -math_ops.multiply(label, math_ops.log(prediction + epsilon)) - math_ops.multiply((1 - label), math_ops.log(1 - prediction + epsilon))
             
         binary_crossentropy = weighted_cross_entropy(logits, train_labels)
         total_loss = tf.reduce_mean(binary_crossentropy)
