@@ -177,7 +177,7 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[10, 0.0001],
+        epochs_lr = [[80, 0.0001],
                      [10, 0.00001],
                      [10, 0.000001],
                      [10, 0.0000001]]

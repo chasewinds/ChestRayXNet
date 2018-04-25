@@ -121,7 +121,15 @@ def run():
         probabilities = tf.sigmoid(logits)
         ## new loss, just equal to the sum of 14 log loss
         # loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities)
-        loss = tf.reduce_mean(cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9))
+        # loss = tf.reduce_mean(cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9))
+        def weighted_cross_entropy(logits, labels):
+            predictions = tf.sigmoid(logits)
+            # weight:0: 0.012736654326434312, 1: 0.9872633456735657
+            epsilon = 1e-8
+            return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
+            
+        binary_crossentropy = weighted_cross_entropy(logits, train_labels)
+        loss = tf.reduce_mean(binary_crossentropy)
         # loss = tf.reduce_mean(loss)
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
@@ -129,10 +137,10 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
         ## learning rate of fine tuning show be low:
-        epochs_lr = [[20, 0.0002],
-                     [30, 0.0001],
-                     [20, 0.00001],
-                     [20, 0.000001]]
+        epochs_lr = [[80, 0.0001],
+                     [10, 0.00001],
+                     [10, 0.000001],
+                     [10, 0.0000001]]
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
