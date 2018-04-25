@@ -152,12 +152,15 @@ def run():
         # total_loss = tf.losses.log_loss(labels=train_labels, predictions=probabilities, weights=weights)
         # cross_entropy_loss = tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9)
         # weighted_loss = [tf.multiply(sample_loss, weights) for sample_loss in cross_entropy_loss]
-        # def weighted_cross_entropy(logits, labels):
-        #     predictions = tf.sigmoid(logits)
-        #     def one_binary_loss(logit, label, weight):
-        #         return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) * weight[1] - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon)) * weight[0]
-        #     loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply(
-        #     (1 - labels), math_ops.log(1 - predictions + epsilon))
+        def weighted_cross_entropy(logits, labels):
+            predictions = tf.sigmoid(logits)
+            # weight:0: 0.012736654326434312, 1: 0.9872633456735657
+            epsilon = 1e-8
+            def one_class_loss(label, logit, prediction):
+                return -math_ops.multiply(label, math_ops.log(prediction + epsilon)) - math_ops.multiply((1 - label), math_ops.log(1 - prediction + epsilon))
+            
+        binary_crossentropy = weighted_cross_entropy(logits, train_labels)
+        total_loss = tf.reduce_mean(binary_crossentropy)
             
         #     return tf.multiply(elems, weights)
         # loss_input = tf.group(logits, train_labels)
@@ -170,8 +173,8 @@ def run():
         #     loss = -math_ops.multiply(labels, math_ops.log(predictions + epsilon))*0.95 - math_ops.multiply(
         #     (1 - labels), math_ops.log(1 - predictions + epsilon))*0.05
         #     return loss
-        binary_crossentropy = tf.div(tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9), 10.0)
-        total_loss = tf.reduce_mean(binary_crossentropy)
+        # binary_crossentropy = tf.div(tf.nn.weighted_cross_entropy_with_logits(targets=train_labels, logits=logits, pos_weight=9),
+        # total_loss = tf.reduce_mean(binary_crossentropy)
         # binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
         # total_loss = tf.reduce_mean(binary_crossentropy)
         # l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables('densenet121/logits')])
@@ -184,10 +187,10 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[10, 0.00001],
+        epochs_lr = [[10, 0.0001],
+                     [10, 0.00001],
                      [10, 0.000001],
-                     [10, 0.0000001],
-                     [10, 0.00000001]]
+                     [10, 0.0000001]]
         # use one cycle learning rate stratege
         # epochs_lr = [[1, 0.0001],
         #              [10, 0.0002],
