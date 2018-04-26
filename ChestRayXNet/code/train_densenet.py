@@ -177,10 +177,10 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[80, 0.0001],
-                     [10, 0.00001],
-                     [10, 0.000001],
-                     [10, 0.0000001]]
+        # epochs_lr = [[80, 0.0001],
+        #              [10, 0.00001],
+        #              [10, 0.000001],
+        #              [10, 0.0000001]]
         # use one cycle learning rate stratege
         # epochs_lr = [[1, 0.0001],
         #              [10, 0.0002],
@@ -190,12 +190,12 @@ def run():
         #              [50, 0.001],
         #              [100, 0.0001]]
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
-        lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
-                                                   global_step=global_step,
-                                                   steps_per_epoch=num_batches_per_epoch)
+        # lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
+        #                                            global_step=global_step,
+        #                                            steps_per_epoch=num_batches_per_epoch)
 
         # Now we can define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # Create the train_op.
         train_op = slim.learning.create_train_op(total_loss, optimizer)
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
