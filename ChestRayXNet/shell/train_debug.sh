@@ -5,7 +5,7 @@ python code/train_clean.py \
     --image_set_dir '/home/rubans/dataset/images' \
     --tfrecord_dir 'data/tfrecord/all' \
     --tfrecord_prefix 'chest14_all' \
-    --log_dir 'log/dense121' \
+    --log_dir 'log/dense121_debug' \
     --log_txt_path 'log/dense121/validation_log.txt' \
     --image_label_list 'data/list/14muti/label_lesion.txt' \
     --model_type 'densenet121' \
