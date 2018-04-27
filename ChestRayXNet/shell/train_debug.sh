@@ -15,5 +15,5 @@ python code/train_clean.py \
     --batch_size 64 \
     --step_size 50 \
     --learning_rate 0.01 \
-    --lr_decay_factor 0.1 \
+    --lr_decay_factor 0.2 \
     --weight_decay 1e-5
