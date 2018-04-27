@@ -7,7 +7,7 @@ from tensorflow.python.platform import tf_logging as logging
 
 from sklearn.metrics import roc_auc_score, roc_curve
 import data_preproces
-from dataset_utils import read_label_file
+# from dataset_utils import read_label_file
 
 slim = tf.contrib.slim
 
