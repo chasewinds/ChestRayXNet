@@ -169,7 +169,7 @@ def run():
         def train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_label, probability, origin_loss):
             # runs a session for the all arguments provided and gives a logging on the time elapsed for each global step
             start_time = time.time()
-            total_loss, global_step_count, accuracy_value, learning_rate, auc_label, auc_prob, log_loss = sess.run([train_op, global_step, accuracy, lr, train_label, probability, origin_loss])
+            loss_value, global_step_count, accuracy_value, learning_rate, auc_label, auc_prob, log_loss = sess.run([train_op, global_step, accuracy, lr, train_label, probability, origin_loss])
             time_elapsed = time.time() - start_time
             #Run the logging to print some results
             #logging.info("prob output from the network is : %s, label is : %s, loss from log_loss function is : %s" % (auc_prob, auc_label, log_loss))
@@ -186,7 +186,7 @@ def run():
             epoch = global_step_count/num_batches_per_epoch + 1
             logging.info('Epoch: %s, global step %s: learning rate: %s, LOSS: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, log_loss, accuracy_value, time_elapsed)
             # logging.info("the loss in this step is : %s" % str(int(sum(sum(log_loss))) / 14.0))
-            return total_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
+            return loss_value, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
 
         # define a supervisor for running a managed session, this help save log and init weight.
         sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None, init_fn=restore_fn)
