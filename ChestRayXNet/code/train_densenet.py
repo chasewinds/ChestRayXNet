@@ -9,14 +9,13 @@ from tensorflow.python.platform import tf_logging as logging
 
 from sklearn.metrics import roc_auc_score
 import data_preproces
-from data_prepare import get_split, load_batch
-from densenet_elu import densenet121, densenet161, densenet_arg_scope
+from dataset_provider import get_split, load_batch
+from densenet import densenet121, densenet161, densenet_arg_scope
 from vgg import vgg_16, vgg_arg_scope
 from custlearningrate import CustLearningRate
 slim = tf.contrib.slim
 
-#================ DATASET INFORMATION ======================
-
+# Inputs form shell 
 """
 all the argment need to read from shell is as fellow:
 dataset_dir, log_dir, checkpoint_file,
@@ -41,7 +40,7 @@ flags.DEFINE_string('model_type', None, 'String, select network for training and
 
 flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')
 
-# flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')
+flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')
 
 # hparmeters
 flags.DEFINE_integer('num_classes', 2, 'Int, Number of classes your network output')
@@ -182,13 +181,7 @@ def run():
                      [10, 0.000001],
                      [10, 0.0000001]]
         # use one cycle learning rate stratege
-        # epochs_lr = [[1, 0.0001],
-        #              [10, 0.0002],
-        #              [20, 0.0004],
-        #              [30, 0.0006],
-        #              [40,0.0008],
-        #              [50, 0.001],
-        #              [100, 0.0001]]
+
         epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
@@ -213,9 +206,9 @@ def run():
 
         ## new loss, just equal to the sum of 14 log loss
         # val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
-        # val_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
+        val_binary_crossentropy = tf.nn.sigmoid_cross_entropy_with_logits(labels=val_labels, logits=val_logits)
         # val_loss = tf.reduce_mean(val_loss)
-        val_binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
+        # val_binary_crossentropy = tf.keras.backend.binary_crossentropy(target=train_labels, output=logits, from_logits=True)
         val_loss = tf.reduce_mean(val_binary_crossentropy)
 
         val_lesion_pred = tf.cast(tf.greater_equal(val_probabilities, 0.5), tf.float32)
@@ -293,30 +286,30 @@ def run():
                     logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
                     logging.info('Accuracy in this training epoch is : %s', accuracy_value)
-                    epoch_loss[:] = []
-                    val_label_arr = []
-                    val_prob_arr = []
-                    val_loss_arr = []
-                    val_acc_arr = []
-                    for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
-                        loss_values, accuracy_values, batch_label, batch_prob = val_step(sess, 
-                        val_loss, val_accuracy, val_labels, val_probabilities)
-                        # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
-                        batch_mean_loss = float(loss_values)
-                        val_loss_arr.append(batch_mean_loss)
-                        val_acc_arr.append(accuracy_values)
-                        val_label_arr.append(batch_label)
-                        val_prob_arr.append(batch_prob)
-                        logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
+                    # epoch_loss[:] = []
+                    # val_label_arr = []
+                    # val_prob_arr = []
+                    # val_loss_arr = []
+                    # val_acc_arr = []
+                    # for i in xrange(val_num_batches_per_epoch): ## ok, I just want it run faster!
+                    #     loss_values, accuracy_values, batch_label, batch_prob = val_step(sess, 
+                    #     val_loss, val_accuracy, val_labels, val_probabilities)
+                    #     # logging.info("float(sum(loss_values)) = %s" % float(sum(loss_values)))
+                    #     batch_mean_loss = float(loss_values)
+                    #     val_loss_arr.append(batch_mean_loss)
+                    #     val_acc_arr.append(accuracy_values)
+                    #     val_label_arr.append(batch_label)
+                    #     val_prob_arr.append(batch_prob)
+                    #     logging.info('Loss on validation batch %s is : %s' % (i, loss_values))
                         # logging.info('Accuracy on validaton batch %s is : %s' % (i, accuracy_values))
-                    epoch_mean_loss = float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)
-                    total_val_loss.append(epoch_mean_loss)
-                    logging.info('Mean loss on this validation epoch is: %s' % epoch_mean_loss)
+                    # epoch_mean_loss = float(sum(val_loss_arr)) / max(len(val_loss_arr), 1)
+                    # total_val_loss.append(epoch_mean_loss)
+                    # logging.info('Mean loss on this validation epoch is: %s' % epoch_mean_loss)
 
-                    mean_auc = epoch_auc(val_label_arr, val_prob_arr, FLAGS.num_classes)
-                    logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
-                    total_val_auc.append(mean_auc)
-                    write_log(total_val_loss, total_val_auc, FLAGS.log_txt_path)
+                    # mean_auc = epoch_auc(val_label_arr, val_prob_arr, FLAGS.num_classes)
+                    # logging.info('Mean auc on this validation epoch is: %s' % mean_auc)
+                    # total_val_auc.append(mean_auc)
+                    # write_log(total_val_loss, total_val_auc, FLAGS.log_txt_path)
 
                 # Log the summaries every 100 step.
                 if step % 20 == 0:

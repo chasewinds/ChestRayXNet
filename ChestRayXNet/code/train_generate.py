@@ -8,9 +8,9 @@ from tensorflow.python.platform import tf_logging as logging
 from sklearn.metrics import roc_auc_score
 import data_preproces
 # import mlog
-from data_prepare import get_split, load_batch
+from dataset_provider import get_split, load_batch
 from vgg import vgg_16, vgg_arg_scope
-from densenet_elu import densenet121, densenet161, densenet_arg_scope
+from densenet import densenet121, densenet161, densenet_arg_scope
 from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_scope 
 from custlearningrate import CustLearningRate
 slim = tf.contrib.slim

@@ -22,7 +22,7 @@ def _conv(inputs, num_filters, kernel_size, stride=1, dropout_rate=None,
   with tf.variable_scope(scope, 'xx', [inputs]) as sc:
     net = slim.batch_norm(inputs)
     net = tf.nn.relu(net)
-    net = slim.conv2d(net, num_filters, kernel_size)
+    net = slim.conv2d(net, num_filters, kernel_size, activation_fn=tf.nn.relu)
 
     if dropout_rate:
       net = tf.nn.dropout(net)
@@ -117,7 +117,7 @@ def densenet(inputs,
       net = inputs
 
       # initial convolution
-      net = slim.conv2d(net, num_filters, 7, stride=2, scope='conv1')
+      net = slim.conv2d(net, num_filters, 7, stride=2, activation_fn=tf.nn.relu, scope='conv1')
       net = slim.batch_norm(net)
       net = tf.nn.relu(net)
       net = slim.max_pool2d(net, 3, stride=2, padding='SAME')
@@ -145,14 +145,15 @@ def densenet(inputs,
         net = tf.nn.relu(net)
         net = _global_avg_pool2d(net, scope='global_avg_pool')
 
-      # net = slim.conv2d(net, num_classes, 1,
-      #                   biases_initializer=tf.zeros_initializer(),
-      #                   scope='logits')
-      net = slim.flatten(net)
-      if fc_dropout_rate:
-        net = slim.dropout(net, fc_dropout_rate, is_training=is_training, scope='Dropout')
-      logits = slim.fully_connected(net, num_classes, activation_fn=None,
-                                    scope='Logits')
+      net = slim.conv2d(net, num_classes, 1,
+                        biases_initializer=tf.zeros_initializer(),
+                        scope='logits')
+      # net = slim.flatten(net)
+      # if fc_dropout_rate:
+      #   net = slim.dropout(net, fc_dropout_rate, is_training=is_training, scope='Dropout')
+      # logits = slim.fully_connected(net, num_classes, activation_fn=None,
+      #                               scope='Logits')
+      logits = tf.squeeze(net, [1, 2], name='squeeze')
 
       end_points = slim.utils.convert_collection_to_dict(
           end_points_collection)
