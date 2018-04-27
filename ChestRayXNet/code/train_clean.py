@@ -209,15 +209,15 @@ def run():
                     logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
                     logging.info('Accuracy in this training epoch is : %s', accuracy_value)
-                    epoch_auc = epoch_auc(total_label, total_prob, 14)
-                    logging.info('The auc of this epoch is : %s' % epoch_auc)
+                    epoch_aucs = epoch_auc(total_label, total_prob, 14)
+                    logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
                     logging.info('AUC value on the last training batch is : %s' % auc)
                     try:
-                        logging.info("epoch auc is : %s" % epoch_auc)
+                        logging.info("epoch auc is : %s" % epoch_aucs)
                     except:
                         pass
                     summaries = sess.run(my_summary_ops)
