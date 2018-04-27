@@ -150,8 +150,8 @@ def run():
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
         #define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999, epsilon=1e-8)
-        train_op = slim.learning.create_train_op(total_loss, optimizer, variables_to_train='conv1')
+        optimizer = tf.train.AdamOptimizer(learning_rate=0, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        train_op = slim.learning.create_train_op(total_loss, optimizer)
 
         # convert logits into probabilities
         probability = tf.sigmoid(logits)
