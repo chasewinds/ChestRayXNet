@@ -209,13 +209,14 @@ def run():
                     logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
                     logging.info('Accuracy in this training epoch is : %s', accuracy_value)
-                    logging.info('The auc of this epoch is : %s' % epoch_auc(total_label, total_prob, 14))
-                    with open("log/dense121/test_auc.txt", 'w') as f:
-                        f.write(epoch_auc(total_label, total_prob, 14))
+                    epoch_auc = epoch_auc(total_label, total_prob, 14)
+                    logging.info('The auc of this epoch is : %s' % epoch_auc)
+                    
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
                     logging.info('AUC value on the last training batch is : %s' % auc)
+                    logging.info("epoch auc is : %s" % epoch_auc)
                     summaries = sess.run(my_summary_ops)
                     sv.summary_computed(sess, summaries)
 
