@@ -210,6 +210,8 @@ def run():
                     # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
                     logging.info('Accuracy in this training epoch is : %s', accuracy_value)
                     logging.info('The auc of this epoch is : %s' % epoch_auc(total_label, total_prob, 14))
+                    with open("log/dense121/test_auc.txt", 'w') as f:
+                        f.write(epoch_auc(total_label, total_prob, 14))
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
