@@ -95,7 +95,7 @@ def write_log(auc_arr, txt_path):
             # f.write("The AUC value of each sub class before Epoch %s, is: %s\n" % (i + 1, lesion_auc))
             for j in range(len(lesion)):
                 try:
-                f.write('%s : %s\n' % (lesion[j], sample_auc[j][1]))
+                    f.write('%s : %s\n' % (lesion[j], sample_auc[j][1]))
                 except:
                     continue
             f.write('\n')
