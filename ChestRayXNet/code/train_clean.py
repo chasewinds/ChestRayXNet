@@ -98,6 +98,8 @@ def write_log(loss_arr, auc_arr, txt_path):
             f.write('\n')
 
 def run():
+    total_prob = []
+    total_label = []
     image_size = 224
     # create the log directory if it not exit
     if not os.path.exists(FLAGS.log_dir):
@@ -175,6 +177,8 @@ def run():
             #logging.info("prob output from the network is : %s, label is : %s, loss from log_loss function is : %s" % (auc_prob, auc_label, log_loss))
             # out_prob = [0 if y < 0.5 else 1 for x in auc_prob for y in x]
             # logging.info("DEBUG: sigmoid logits is : %s" % out_prob[0])
+            total_prob.append(auc_prob)
+            total_label.append(auc_label)
             auc = []
             for i in range(FLAGS.num_classes):
                 sub_prob = [x[i] for x in auc_prob]
@@ -205,6 +209,7 @@ def run():
                     logging.info('Epoch %s/%s', step/num_batches_per_epoch + 1, FLAGS.num_epoch)
                     # logging.info('Mean loss on this training epoch is: %s' % (float(sum(epoch_loss)) / max(len(epoch_loss), 1)))
                     logging.info('Accuracy in this training epoch is : %s', accuracy_value)
+                    logging.info('The auc of this epoch is : %s' % epoch_auc(total_label, total_prob, 14))
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
