@@ -216,7 +216,10 @@ def run():
                 # log summaries every 20 step.
                 if step % 20 == 0:
                     logging.info('AUC value on the last training batch is : %s' % auc)
-                    logging.info("epoch auc is : %s" % epoch_auc)
+                    try:
+                        logging.info("epoch auc is : %s" % epoch_auc)
+                    except:
+                        pass
                     summaries = sess.run(my_summary_ops)
                     sv.summary_computed(sess, summaries)
 
