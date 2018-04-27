@@ -114,7 +114,7 @@ def run():
             images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=is_training)
             return images, labels, dataset.num_samples
         # get train data
-        train_images, train_labels, num_samples = load_batch_from_tfrecord('train')
+        train_images, train_labels, num_samples = load_batch_from_tfrecord('test')
         # caculate the number steps to take before decaying the learning rate and batches per epoch
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
 
@@ -151,7 +151,7 @@ def run():
                                                    steps_per_epoch=num_batches_per_epoch)
         #define the optimizer that takes on the learning rate
         optimizer = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999, epsilon=1e-8)
-        train_op = slim.learning.create_train_op(total_loss, optimizer)
+        train_op = slim.learning.create_train_op(total_loss, optimizer, variables_to_train='conv1')
 
         # convert logits into probabilities
         probability = tf.sigmoid(logits)
