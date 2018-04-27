@@ -83,13 +83,13 @@ def one_cycle_lr(step_one_epoch_n, step_two_epoch_n, min_lr, max_lr, step_two_de
         epochs_lr.append([i, min_lr * step_two_decay * i])
     return epochs_lr
 
-def write_log(loss_arr, auc_arr, txt_path):
+def write_log(auc_arr, txt_path):
     lesion = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration',
               'Mass', 'Nodule', 'Pneumonia', 'Pneumothorax', 'Consolidation',
               'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
     with open(txt_path, 'w') as f:
-        for i in range(len(loss_arr)):
-            f.write("The mean loss before Epoch %s, is %s\n" % (i + 1, loss_arr[i]))
+        for i in range(len(auc_arr)):
+            f.write("The mean loss before Epoch %s, is %s\n" % (i + 1, 0.0001))
             sample_auc = auc_arr[i]
             # lesion_auc = [[lesion[j], sample_auc[j]] for j in range(len(lesion))]
             # f.write("The AUC value of each sub class before Epoch %s, is: %s\n" % (i + 1, lesion_auc))
@@ -197,9 +197,8 @@ def run():
         # sv = tf.train.Supervisor(logdir=FLAGS.log_dir, summary_op=None)
         # run the managed session
         with sv.managed_session() as sess:
-            total_val_loss = []
-            total_val_auc = []
             epoch_loss = []
+            auc_arr = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 # train one step
                 batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probability, total_loss)
@@ -211,6 +210,8 @@ def run():
                     logging.info('Accuracy in this training epoch is : %s', accuracy_value)
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
+                    auc_arr.append(epoch_aucs)
+                    write_log(auc_arr, "train_log.txt")
                     
                     
                 # log summaries every 20 step.
