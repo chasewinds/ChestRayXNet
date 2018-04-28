@@ -145,17 +145,17 @@ def run():
         total_loss = tf.reduce_mean(binary_crossentropy)
         global_step = get_or_create_global_step()
         # step size and related learning rate 
-        epochs_lr = [[80, 0.0001],
-                     [10, 0.00001],
+        epochs_lr = [[50, 0.0001],
+                     [15, 0.00001],
                      [10, 0.000001],
                      [10, 0.0000001]]
         # use one cycle learning rate stratege
-        epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
+        # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
         #define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
         train_op = slim.learning.create_train_op(total_loss, optimizer)
 
         # convert logits into probabilities
@@ -214,7 +214,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "train_log.txt")
+                    write_log(auc_arr, "train_lower_lr_log.txt")
                     
                     
                 # log summaries every 20 step.
