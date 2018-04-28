@@ -194,7 +194,7 @@ def run():
 
         if FLAGS.model_type == 'densenet121':
             with slim.arg_scope(densenet_arg_scope()):
-                val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
+                val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=True, reuse=True)
 
         elif FLAGS.model_type == 'vgg16':
             with slim.arg_scope(vgg_arg_scope()):
