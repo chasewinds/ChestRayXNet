@@ -154,7 +154,7 @@ def run():
         # lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
         #                                            global_step=global_step,
         #                                            steps_per_epoch=num_batches_per_epoch)
-        lr = tf.constant(0)
+        lr = tf.constant([0])
         #define the optimizer that takes on the learning rate
         # optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=0)
