@@ -65,14 +65,25 @@ def run():
     # TODO: construct the graph 
     with tf.Graph().as_default() as graph:
         tf.logging.set_verbosity(tf.logging.INFO)
-        # TODO: load one batch data
-        file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
-        dataset = get_split('validation', FLAGS.dataset_dir, FLAGS.num_classes, file_pattern, FLAGS.tfrecord_prefix)
-        images, raw_images, labels = load_batch(dataset, batch_size=FLAGS.batch_size, num_classes=FLAGS.num_classes, is_training=False)
+        # # TODO: load one batch data
+        # file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
+        # dataset = get_split('validation', FLAGS.dataset_dir, FLAGS.num_classes, file_pattern, FLAGS.tfrecord_prefix)
+        # images, _, labels = load_batch(dataset, batch_size=FLAGS.batch_size, num_classes=FLAGS.num_classes, is_training=False)
+
+        # TODO: load one batch
+        def load_batch_from_tfrecord(split_name, dataset_dir=FLAGS.tfrecord_dir, num_classes=FLAGS.num_classes,
+                                     tfrecord_prefix=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size):
+            is_training = True if split_name == 'train' else False
+            file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
+            dataset = get_split(split_name, dataset_dir, num_classes, file_pattern, tfrecord_prefix)
+            images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=is_training)
+            return images, labels, dataset.num_samples
+        # get train data
+        images, labels, num_samples = load_batch_from_tfrecord('validation')
 
         #Create some information about the training steps
         # assert dataset.num_samples % FLAGS.batch_size == 0, 'batch size can not be div by number sampels, the total sampels is %s' % dataset.num_samples
-        num_batches_per_epoch = (dataset.num_samples - 1) / FLAGS.batch_size + 1
+        num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
 
         # Now create the inference model but set is_training=False
         with slim.arg_scope(densenet_arg_scope()):
