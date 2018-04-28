@@ -161,7 +161,7 @@ def run():
         #Now we are ready to run in one session
         with tf.train.MonitoredTrainingSession(checkpoint_dir=FLAGS.log_dir, save_checkpoint_secs=None) as sess:
             for step in xrange(num_batches_per_epoch * FLAGS.num_epochs):
-                sess.run(sv.global_step)
+                # sess.run(sv.global_step)
                 # TODO: run one evaluate step
                 eval_step(sess)
                 
