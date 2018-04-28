@@ -71,7 +71,7 @@ def run():
         # images, _, labels = load_batch(dataset, batch_size=FLAGS.batch_size, num_classes=FLAGS.num_classes, is_training=False)
 
         # TODO: load one batch
-        def load_batch_from_tfrecord(split_name, dataset_dir=FLAGS.tfrecord_dir, num_classes=FLAGS.num_classes,
+        def load_batch_from_tfrecord(split_name, dataset_dir=FLAGS.dataset_dir, num_classes=FLAGS.num_classes,
                                      tfrecord_prefix=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size):
             is_training = True if split_name == 'train' else False
             file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
