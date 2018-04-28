@@ -145,10 +145,10 @@ def run():
         total_loss = tf.reduce_mean(binary_crossentropy)
         global_step = get_or_create_global_step()
         # step size and related learning rate 
-        epochs_lr = [[5, 0.001],
-                     [50, 0.0001],
-                     [3, 0.00001],
-                     [3000, 0.0000001]]
+        epochs_lr = [[10, 0.001],
+                     [30, 0.0001],
+                     [5, 0.00001],
+                     [5, 0.0000001]]
         # use one cycle learning rate stratege
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
