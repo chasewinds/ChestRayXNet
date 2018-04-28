@@ -119,7 +119,7 @@ def run():
             images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=is_training)
             return images, labels, dataset.num_samples
         # get train data
-        train_images, train_labels, num_samples = load_batch_from_tfrecord('train')
+        train_images, train_labels, num_samples = load_batch_from_tfrecord('validation')
         # caculate the number steps to take before decaying the learning rate and batches per epoch
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
 
@@ -146,7 +146,7 @@ def run():
         global_step = get_or_create_global_step()
         # step size and related learning rate 
         epochs_lr = [[5, 0.001],
-                     [10, 0.0001],
+                     [30, 0.0001],
                      [3, 0.00001],
                      [3, 0.0000001]]
         # use one cycle learning rate stratege
@@ -156,8 +156,8 @@ def run():
                                                    steps_per_epoch=num_batches_per_epoch)
         # lr = tf.constant([0])
         #define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
-        # optimizer = tf.train.GradientDescentOptimizer(learning_rate=0)
+        # optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate=0)
         train_op = slim.learning.create_train_op(total_loss, optimizer)
 
         # convert logits into probabilities
@@ -216,7 +216,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "validation_log.txt")
+                    write_log(auc_arr, "txt/validation_log1.txt")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
