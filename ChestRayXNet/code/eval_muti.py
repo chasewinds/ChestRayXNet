@@ -157,9 +157,9 @@ def run():
         my_summary_op = tf.summary.merge_all()
 
         #Get your supervisor
-        sv = tf.train.Supervisor(logdir=FLAGS.log_eval, summary_op=None, saver=None, init_fn=restore_fn)
+        # sv = tf.train.Supervisor(logdir=FLAGS.log_eval, summary_op=None, saver=None, init_fn=restore_fn)
         #Now we are ready to run in one session
-        with sv.managed_session() as sess:
+        with tf.train.MonitoredTrainingSession(checkpoint_dir=FLAGS.log_dir, save_checkpoint_secs=None) as sess:
             for step in xrange(num_batches_per_epoch * FLAGS.num_epochs):
                 sess.run(sv.global_step)
                 # TODO: run one evaluate step
@@ -190,5 +190,4 @@ def run():
 
 
 if __name__ == '__main__':
-    # mlog.initlog(FLAGS.log_dir)
     run()
