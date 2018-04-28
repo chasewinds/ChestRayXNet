@@ -216,7 +216,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "txt/validation_log2.txt")
+                    write_log(auc_arr, "txt/train_10_30_5_5.txt")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
