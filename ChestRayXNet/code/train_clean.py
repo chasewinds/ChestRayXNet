@@ -109,13 +109,14 @@ def run():
         os.mkdir(FLAGS.log_dir)
     # start construct the graph and train our model
     with tf.Graph().as_default() as graph:
-        tf.logging.set_verbosity(tf.logging.INFO) #Set the verbosity to INFO level
-        # load one batch
+        tf.logging.set_verbosity(tf.logging.INFO) # Set the verbosity to INFO level
+
+        # TODO: load one batch
         def load_batch_from_tfrecord(split_name, dataset_dir=FLAGS.tfrecord_dir, num_classes=FLAGS.num_classes,
-                                     file_pattern_for_counting=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size):
+                                     tfrecord_prefix=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size):
             is_training = True if split_name == 'train' else False
             file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
-            dataset = get_split(split_name, dataset_dir, num_classes, file_pattern, file_pattern_for_counting)
+            dataset = get_split(split_name, dataset_dir, num_classes, file_pattern, tfrecord_prefix)
             images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=is_training)
             return images, labels, dataset.num_samples
         # get train data
@@ -123,28 +124,33 @@ def run():
         # caculate the number steps to take before decaying the learning rate and batches per epoch
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
 
+        # TODO: feed data into network
+        # feed batch wise data into network and get logits of shape (batch_size, num_classes)
         with slim.arg_scope(densenet_arg_scope()):
             logits, _ = densenet121(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
 
         # define the scopes doesn't restore from the ckpt file.
         exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
-
         # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
         def restore_fn(sess):
             return saver.restore(sess, FLAGS.checkpoint_file)
 
+        # TODO: define loss, loss is the sum of 14 binary cross entropy.
         def weighted_cross_entropy(logits, labels):
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
             epsilon = 1e-8
             return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
-        # caculate weighted loss
+        # compute loss
         binary_crossentropy = weighted_cross_entropy(logits, train_labels)
         total_loss = tf.reduce_mean(binary_crossentropy)
+
+        # TODO: define learning rate and train operation
+        # creat global step count
         global_step = get_or_create_global_step()
-        # step size and related learning rate 
+        # FORMATE: [step size, related learning rate]
         epochs_lr = [[10, 0.001],
                      [30, 0.0001],
                      [5, 0.00001],
@@ -154,26 +160,26 @@ def run():
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
-        # lr = tf.constant([0])
         #define the optimizer that takes on the learning rate
         optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # optimizer = tf.train.GradientDescentOptimizer(learning_rate=0)
-        train_op = slim.learning.create_train_op(total_loss, optimizer)
+        train_op = slim.learning.create_train_op(total_loss, optimizer) # minimize loss
 
+        # TODO: calculate accuracy
         # convert logits into probabilities
         probability = tf.sigmoid(logits)
         # convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probability, 0.5), tf.float32)
-        # create the global step for monitoring the learning_rate and training.
-        accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, train_labels), tf.float32))
-        # create all summaries you need to monitor and group them into one summary op.
+        accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, train_labels), tf.float32)
+        
+        # TODO: write log, those summary can be view by tensorbord
         # tf.summary.scalar('losses/Total_Loss', total_loss)
         tf.summary.scalar('accuracy', accuracy)
         # tf.summary.scalar('learning_rate', lr)
         my_summary_op = tf.summary.merge_all()
 
         # create a training step function that runs both the train_op, metrics_op and updates the global_step concurrently.
-        def train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_label, probability, origin_loss):
+        def train_one_batch(sess, train_op, global_step, accuracy, lr, my_summary_op, train_label, probability, origin_loss):
             # runs a session for the all arguments provided and gives a logging on the time elapsed for each global step
             start_time = time.time()
             loss_value, global_step_count, accuracy_value, learning_rate, auc_label, auc_prob, log_loss = sess.run([train_op, global_step, accuracy, lr, train_label, probability, origin_loss])
@@ -206,7 +212,7 @@ def run():
             auc_arr = []
             for step in xrange(num_batches_per_epoch * FLAGS.num_epoch):
                 # train one step
-                batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_step(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probability, total_loss)
+                batch_loss, global_step_count, accuracy_value, learning_rate, my_summary_ops, auc = train_one_batch(sess, train_op, global_step, accuracy, lr, my_summary_op, train_labels, probability, total_loss)
                 epoch_loss.append(batch_loss)
                 # at the start of every epoch, show some global informations and run validation set once:
                 if step % num_batches_per_epoch == 0:
