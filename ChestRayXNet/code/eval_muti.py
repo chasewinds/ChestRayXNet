@@ -134,7 +134,6 @@ def run():
         my_summary_op = tf.summary.merge_all()
 
         #Get your supervisor
-
         sv = tf.train.Supervisor(logdir=FLAGS.log_eval, summary_op=None, saver=None, init_fn=restore_fn)
         #Now we are ready to run in one session
         with sv.managed_session() as sess:
@@ -160,7 +159,7 @@ def run():
                 parsed_pred, parsed_label = parse_label(total_pred, total_label, i)
                 # logging.info('the parsed predict is : %s, len is : %s' % (parsed_pred, len(parsed_pred)))
                 # logging.info('the parsed lable is : %s, len is : %s' % (parsed_label, len(parsed_label)))
-                auc1 = get_auc(parsed_pred, parsed_label)
+                auc1, _, _ = get_auc(parsed_pred, parsed_label)
                 auc_arr1.append(round(float(auc1), 2))
 
                 auc2 = roc_auc_score(parsed_pred, parsed_label)
