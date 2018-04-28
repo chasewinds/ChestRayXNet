@@ -100,7 +100,7 @@ def run():
             epsilon = 1e-8
             return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
         # calculate loss
-        binary_crossentropy = weighted_cross_entropy(logits, train_labels)
+        binary_crossentropy = weighted_cross_entropy(logits, labels)
         loss = tf.reduce_mean(binary_crossentropy)
 
         #Create the global step and an increment op for monitoring
