@@ -169,7 +169,7 @@ def run():
         # create all summaries you need to monitor and group them into one summary op.
         # tf.summary.scalar('losses/Total_Loss', total_loss)
         tf.summary.scalar('accuracy', accuracy)
-        tf.summary.scalar('learning_rate', lr)
+        # tf.summary.scalar('learning_rate', lr)
         my_summary_op = tf.summary.merge_all()
 
         # create a training step function that runs both the train_op, metrics_op and updates the global_step concurrently.
