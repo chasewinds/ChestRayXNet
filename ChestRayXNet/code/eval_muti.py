@@ -1,6 +1,7 @@
 import os
 import time
 import numpy as np
+from sklearn.metrics import roc_auc_score
 
 import tensorflow as tf
 from tensorflow.python.platform import tf_logging as logging
@@ -22,7 +23,6 @@ flags.DEFINE_string('log_eval', None, 'String, dir evaluate log save')
 
 # State the dataset directory where the validation set is found
 flags.DEFINE_string('dataset_dir', None, 'String, dataset dir')
-
 #
 flags.DEFINE_string('auc_picture_path', None, 'String, the path auc picture save')
 
@@ -144,16 +144,22 @@ def run():
             # logging.info('len pred all %s' % len(pred_all))
             # logging.info('len label all %s' % len(label_all))
 
-            auc_metrics = []
+            auc_arr1 = []
+            auc_arr2 = []
             for i in range(FLAGS.num_classes):
                 # roc_save_path = FLAGS.auc_picture_path.split('.')[0] + str(i) + '.png'
                 parsed_pred, parsed_label = parse_label(pred_all, label_all, i)
                 # logging.info('the parsed predict is : %s, len is : %s' % (parsed_pred, len(parsed_pred)))
                 # logging.info('the parsed lable is : %s, len is : %s' % (parsed_label, len(parsed_label)))
-                auc = get_auc(parsed_pred, parsed_label)
-                auc_metrics.append(round(auc, 2))
+                auc1 = get_auc(parsed_pred, parsed_label)
+                auc_arr1.append(round(auc1, 2))
+
+                auc2 = roc_auc_score(parsed_pred, parsed_label)
+                auc_arr2.append(round(auc2, 2))
             logging.info('Mean loss one validation set is : %s' % (sum(mean_loss) / float(len(mean_loss))))
-            logging.info('The auc of each class is as fellow: %s' % auc_metrics)
+            logging.info('The auc of each class is as fellow, from auc_arr1 : %s' % auc_arr1)
+            logging.info('The auc of each class is as fellow, from auc_arr2 : %s' % auc_arr2)
+
 
 if __name__ == '__main__':
     # mlog.initlog(FLAGS.log_dir)
