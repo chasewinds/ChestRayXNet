@@ -127,10 +127,10 @@ def run():
         # TODO: feed data into network
         # feed batch wise data into network and get logits of shape (batch_size, num_classes)
         with slim.arg_scope(densenet_arg_scope()):
-            logits, _ = densenet121(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
+            logits, _ = densenet161(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
 
         # define the scopes doesn't restore from the ckpt file.
-        exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
+        exclude = ['densenet161/logits', 'densenet161/final_block', 'densenet161/squeeze']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
         # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
@@ -151,10 +151,10 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[10, 0.001],
-                     [50, 0.0001],
+        epochs_lr = [[20, 0.001],
+                     [40, 0.0001],
                      [5, 0.00001],
-                     [5, 0.0000001]]
+                     [5, 0.000001]]
         # use one cycle learning rate stratege
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
@@ -219,7 +219,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "txt/train_10_30_5_5.txt")
+                    write_log(auc_arr, "txt/train_dense161")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
