@@ -152,7 +152,7 @@ def run():
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
         epochs_lr = [[10, 0.001],
-                     [30, 0.0001],
+                     [50, 0.0001],
                      [5, 0.00001],
                      [5, 0.0000001]]
         # use one cycle learning rate stratege
@@ -184,10 +184,7 @@ def run():
             start_time = time.time()
             loss_value, global_step_count, accuracy_value, learning_rate, auc_label, auc_prob, log_loss = sess.run([train_op, global_step, accuracy, lr, train_label, probability, origin_loss])
             time_elapsed = time.time() - start_time
-            #Run the logging to print some results
-            #logging.info("prob output from the network is : %s, label is : %s, loss from log_loss function is : %s" % (auc_prob, auc_label, log_loss))
-            # out_prob = [0 if y < 0.5 else 1 for x in auc_prob for y in x]
-            # logging.info("DEBUG: sigmoid logits is : %s" % out_prob[0])
+
             total_prob.append(auc_prob)
             total_label.append(auc_label)
             auc = []

@@ -175,7 +175,7 @@ def run():
             # logging.info('len pred all %s' % len(pred_all))
             # logging.info('len label all %s' % len(label_all))
 
-            auc = epoch_auc(total_label, total_prob, 14)
+            auc = epoch_auc(total_label, total_pred, 14)
             logging.info('AUC value in this batch is : %s' % auc)
             auc_arr1 = []
             for i in range(FLAGS.num_classes):
