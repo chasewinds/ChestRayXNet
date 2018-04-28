@@ -162,10 +162,10 @@ def run():
                 # logging.info('the parsed predict is : %s, len is : %s' % (parsed_pred, len(parsed_pred)))
                 # logging.info('the parsed lable is : %s, len is : %s' % (parsed_label, len(parsed_label)))
                 auc1 = get_auc(parsed_pred, parsed_label)
-                auc_arr1.append(round(auc1, 2))
+                auc_arr1.append(round(float(auc1), 2))
 
                 auc2 = roc_auc_score(parsed_pred, parsed_label)
-                auc_arr2.append(round(auc2, 2))
+                auc_arr2.append(round(float(auc2), 2))
             logging.info('Mean loss one validation set is : %s' % (sum(mean_loss) / float(len(mean_loss))))
             logging.info('The auc of each class is as fellow, from auc_arr1 : %s' % auc_arr1)
             logging.info('The auc of each class is as fellow, from auc_arr2 : %s' % auc_arr2)
