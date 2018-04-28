@@ -51,6 +51,17 @@ def require_ckpt_file(log_dir=FLAGS.log_dir, ckpt_id=FLAGS.ckpt_id):
     ckpt_list = [x for x in files if x.split('-')[0] == 'model.ckpt']
     return os.path.join(FLAGS.log_dir ,ckpt_list[len(ckpt_list) - ckpt_id])
 
+def epoch_auc(label, prob, num_class):
+    auc_arr = []
+    for i in range(num_class):
+        epoch_total_label = [y[i] for x in label for y in x]
+        epoch_total_pos_prob = [y[i] for x in prob for y in x]
+        try:
+            auc_arr.append([i, round(roc_auc_score(epoch_total_label, epoch_total_pos_prob), 2)])
+        except:
+            continue
+    return auc_arr
+
 def run():
     image_size = 224
     total_pred = []
@@ -73,7 +84,7 @@ def run():
 
         # TODO: load one batch
         def load_batch_from_tfrecord(split_name, dataset_dir=FLAGS.dataset_dir, num_classes=FLAGS.num_classes,
-                                     tfrecord_prefix=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size):
+                                     tfrecord_prefix=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size, image_size=224):
             is_training = True if split_name == 'train' else False
             file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
             dataset = get_split(split_name, dataset_dir, num_classes, file_pattern, tfrecord_prefix)
@@ -164,8 +175,9 @@ def run():
             # logging.info('len pred all %s' % len(pred_all))
             # logging.info('len label all %s' % len(label_all))
 
+            auc = epoch_auc(total_label, total_prob, 14)
+            logging.info('AUC value in this batch is : %s' % auc)
             auc_arr1 = []
-            auc_arr2 = []
             for i in range(FLAGS.num_classes):
                 # roc_save_path = FLAGS.auc_picture_path.split('.')[0] + str(i) + '.png'
                 parsed_pred, parsed_label = parse_label(total_pred, total_label, i)
@@ -173,12 +185,8 @@ def run():
                 # logging.info('the parsed lable is : %s, len is : %s' % (parsed_label, len(parsed_label)))
                 auc1, _, _ = get_auc(parsed_pred, parsed_label)
                 auc_arr1.append(round(float(auc1), 2))
-
-                auc2 = roc_auc_score(parsed_pred, parsed_label)
-                auc_arr2.append(round(float(auc2), 2))
             logging.info('Mean loss one validation set is : %s' % (sum(mean_loss) / float(len(mean_loss))))
             logging.info('The auc of each class is as fellow, from auc_arr1 : %s' % auc_arr1)
-            logging.info('The auc of each class is as fellow, from auc_arr2 : %s' % auc_arr2)
 
 
 if __name__ == '__main__':
