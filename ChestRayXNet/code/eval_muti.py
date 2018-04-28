@@ -68,7 +68,7 @@ def run():
     total_label = []
     epoch_loss = []
     # get the latest checkpoint file
-    checkpoint_file = tf.train.latest_checkpoint(FLAGS.log_dir)
+    # checkpoint_file = tf.train.latest_checkpoint(FLAGS.log_dir)
 
     # create log_dir for evaluation information
     if not os.path.exists(FLAGS.log_eval):
@@ -102,13 +102,13 @@ def run():
             logits, _ = densenet121(images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False)
         
         #get all the variables to restore from the checkpoint file and create the saver function to restore
-        variables_to_restore = slim.get_variables_to_restore()
-        saver = tf.train.Saver(variables_to_restore)
-        def restore_fn(sess):
-            # checkpoint_file = require_ckpt_file(log_dir=FLAGS.log_dir, ckpt_id=FLAGS.ckpt_id)
-            # checkpoint_file = 'log/2muti/model.ckpt-61220'
-            logging.info('From logging, checkpoint_file: %s' % checkpoint_file)
-            return saver.restore(sess, checkpoint_file)
+        # variables_to_restore = slim.get_variables_to_restore()
+        # saver = tf.train.Saver(variables_to_restore)
+        # def restore_fn(sess):
+        #     # checkpoint_file = require_ckpt_file(log_dir=FLAGS.log_dir, ckpt_id=FLAGS.ckpt_id)
+        #     # checkpoint_file = 'log/2muti/model.ckpt-61220'
+        #     logging.info('From logging, checkpoint_file: %s' % checkpoint_file)
+        #     return saver.restore(sess, checkpoint_file)
 
         # TODO: calculate accuaracy and loss
         sigmoid_prob = tf.sigmoid(logits)
@@ -138,7 +138,7 @@ def run():
             global_step_count, step_logits, step_acc, step_loss, step_pred, step_label = sess.run([global_step_op, logits, accuracy, loss, sigmoid_prob, labels])
             time_elapsed = time.time() - start_time
 
-            logging.info('The averange accuracy of this batch(total 32 samples) is: %s, run time is:%s' % (step_acc, time_elapsed))
+            logging.info('The averange accuracy of this batch(total 64 samples) is: %s, run time is:%s' % (step_acc, time_elapsed))
             logging.info('The step loss is : %s' % step_loss)
 
             epoch_loss.append(step_loss)
@@ -154,7 +154,7 @@ def run():
 
         #Define some scalar quantities to monitor
         # tf.summary.scalar('Validation_Accuracy', accuracy)
-        my_summary_op = tf.summary.merge_all()
+        # my_summary_op = tf.summary.merge_all()
 
         #Get your supervisor
         # sv = tf.train.Supervisor(logdir=FLAGS.log_eval, summary_op=None, saver=None, init_fn=restore_fn)
