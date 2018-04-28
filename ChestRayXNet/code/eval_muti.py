@@ -92,7 +92,16 @@ def run():
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, labels), tf.float32))
 
         # loss = tf.losses.log_loss(labels, sigmoid_op)
-        loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits))
+        # loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits))
+        # TODO: define loss, loss is the sum of 14 binary cross entropy.
+        def weighted_cross_entropy(logits, labels):
+            predictions = tf.sigmoid(logits)
+            # weight:0: 0.012736654326434312, 1: 0.9872633456735657
+            epsilon = 1e-8
+            return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
+        # calculate loss
+        binary_crossentropy = weighted_cross_entropy(logits, train_labels)
+        loss = tf.reduce_mean(binary_crossentropy)
 
         #Create the global step and an increment op for monitoring
         global_step = get_or_create_global_step()
@@ -148,7 +157,7 @@ def run():
             auc_arr2 = []
             for i in range(FLAGS.num_classes):
                 # roc_save_path = FLAGS.auc_picture_path.split('.')[0] + str(i) + '.png'
-                parsed_pred, parsed_label = parse_label(pred_all, label_all, i)
+                parsed_pred, parsed_label = parse_label(total_pred, total_label, i)
                 # logging.info('the parsed predict is : %s, len is : %s' % (parsed_pred, len(parsed_pred)))
                 # logging.info('the parsed lable is : %s, len is : %s' % (parsed_label, len(parsed_label)))
                 auc1 = get_auc(parsed_pred, parsed_label)
