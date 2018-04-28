@@ -74,7 +74,7 @@ def get_split(split_name, dataset_dir, num_classes, file_pattern, file_pattern_f
         items_to_descriptions = items_to_descriptions)
     return dataset
 
-def load_batch(dataset, batch_size, num_classes, height=299, width=299, is_training=True, one_hot=False):
+def load_batch(dataset, batch_size, num_classes, height=224, width=224, is_training=True, one_hot=False):
     '''
     Loads a batch for training or validation or test
 
