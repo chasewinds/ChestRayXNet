@@ -127,7 +127,7 @@ def run():
         # TODO: feed data into network
         # feed batch wise data into network and get logits of shape (batch_size, num_classes)
         with slim.arg_scope(densenet_arg_scope()):
-            logits, _ = densenet121(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=False)
+            logits, _ = densenet121(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
 
         # define the scopes doesn't restore from the ckpt file.
         exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']

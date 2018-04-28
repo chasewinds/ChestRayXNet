@@ -99,7 +99,7 @@ def run():
 
         # Now create the inference model but set is_training=False
         with slim.arg_scope(densenet_arg_scope()):
-            logits, _ = densenet121(images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False)
+            logits, _ = densenet121(images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=True)
         
         #get all the variables to restore from the checkpoint file and create the saver function to restore
         # variables_to_restore = slim.get_variables_to_restore()
@@ -158,35 +158,17 @@ def run():
 
         #Get your supervisor
         # sv = tf.train.Supervisor(logdir=FLAGS.log_eval, summary_op=None, saver=None, init_fn=restore_fn)
-        #Now we are ready to run in one session
         with tf.train.MonitoredTrainingSession(checkpoint_dir=FLAGS.log_dir, save_checkpoint_secs=None) as sess:
             for step in xrange(num_batches_per_epoch * FLAGS.num_epochs):
                 # sess.run(sv.global_step)
                 # TODO: run one evaluate step
                 eval_step(sess)
-                
-                # #Compute summaries every 10 steps and continue evaluating
-                # if step % 10 == 0:
-                #     eval_step(sess, metrics_op = metrics_op)
-                #     summaries = sess.run(my_summary_op)
-                #     sv.summary_computed(sess, summaries)
-                #
 
             # logging.info('len pred all %s' % len(pred_all))
             # logging.info('len label all %s' % len(label_all))
-
             auc = epoch_auc(total_label, total_pred, 14)
             logging.info('AUC value in this dateset is : %s' % auc)
-            auc_arr1 = []
-            for i in range(FLAGS.num_classes):
-                # roc_save_path = FLAGS.auc_picture_path.split('.')[0] + str(i) + '.png'
-                parsed_pred, parsed_label = parse_label(total_pred, total_label, i)
-                # logging.info('the parsed predict is : %s, len is : %s' % (parsed_pred, len(parsed_pred)))
-                # logging.info('the parsed lable is : %s, len is : %s' % (parsed_label, len(parsed_label)))
-                auc1, _, _ = get_auc(parsed_pred, parsed_label)
-                auc_arr1.append(round(float(auc1), 2))
             logging.info('Mean loss one validation set is : %s' % (sum(epoch_loss) / float(len(epoch_loss))))
-            logging.info('The auc of each class is as fellow, from auc_arr1 : %s' % auc_arr1)
 
 
 if __name__ == '__main__':
