@@ -5,11 +5,11 @@ python code/train_clean.py \
     --image_set_dir '/home/rubans/dataset/images' \
     --tfrecord_dir 'data/tfrecord/all' \
     --tfrecord_prefix 'chest14_all' \
-    --log_dir 'log/dense121_debug' \
+    --log_dir 'log/debug/dense121_debug' \
     --log_txt_path 'log/dense121/validation_log.txt' \
     --image_label_list 'data/list/14muti/label_lesion.txt' \
     --model_type 'densenet121' \
-    --checkpoint_file 'log/dense121_debug/model.ckpt-14579' \
+    --checkpoint_file 'model/dense121_15epoch/model.ckpt-14579' \
     --num_classes 14 \
     --num_epoch 1000 \
     --batch_size 64 \
