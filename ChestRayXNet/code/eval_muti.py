@@ -52,6 +52,7 @@ def require_ckpt_file(log_dir=FLAGS.log_dir, ckpt_id=FLAGS.ckpt_id):
     return os.path.join(FLAGS.log_dir ,ckpt_list[len(ckpt_list) - ckpt_id])
 
 def run():
+    image_size = 224
     total_pred = []
     total_label = []
     epoch_loss = []
