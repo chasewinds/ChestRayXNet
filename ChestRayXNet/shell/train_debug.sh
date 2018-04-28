@@ -9,7 +9,7 @@ python code/train_clean.py \
     --log_txt_path 'log/dense161/validation_log.txt' \
     --image_label_list 'data/list/14muti/label_lesion.txt' \
     --model_type 'densenet161' \
-    --checkpoint_file 'model/dense161/tf-densenet121.ckpt' \
+    --checkpoint_file 'model/dense161/tf-densenet161.ckpt' \
     --num_classes 14 \
     --num_epoch 1000 \
     --batch_size 32 \
