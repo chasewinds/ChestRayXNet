@@ -154,16 +154,16 @@ def run():
 
        if FLAGS.model_type == 'vgg16':
             with slim.arg_scope(vgg_arg_scope()):
-                val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
+                val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=True, dropout_keep_prob=1, reuse=True)
         elif FLAGS.model_type == 'densenet121':
             with slim.arg_scope(densenet_arg_scope()):
-                val_logits, _ = densenet121(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
+                val_logits, _ = densenet121(val_images, num_classes=FLAGS.num_classes, is_training=True, dropout_keep_prob=1, reuse=True)
         elif FLAGS.model_type == 'densenet161':
             with slim.arg_scope(densenet_arg_scope()):
-                val_logits, _ = densenet161(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
+                val_logits, _ = densenet161(val_images, num_classes=FLAGS.num_classes, is_training=True, dropout_keep_prob=1, reuse=True)
         elif FLAGS.model_type == 'inception_resnet_v2':
             with slim.arg_scope(inception_resnet_v2_arg_scope()):
-                val_logits, _ = inception_resnet_v2(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
+                val_logits, _ = inception_resnet_v2(val_images, num_classes=FLAGS.num_classes, is_training=True, dropout_keep_prob=1, reuse=True)
         
         val_probabilities = tf.sigmoid(val_logits)
         ## new loss, just equal to the sum of 14 log loss
