@@ -2,7 +2,7 @@
 export CUDA_VISIBLE_DEVICES=0
 
 python code/eval_muti.py \
-    --log_dir 'log/dense121' \
+    --log_dir 'log/dense121_debug' \
     --log_eval 'log/log_eval_test' \
     --dataset_dir 'data/tfrecord/all' \
     --auc_picture_path 'eval/auc_path/auc.png' \
