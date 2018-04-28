@@ -176,7 +176,7 @@ def run():
             # logging.info('len label all %s' % len(label_all))
 
             auc = epoch_auc(total_label, total_pred, 14)
-            logging.info('AUC value in this batch is : %s' % auc)
+            logging.info('AUC value in this dateset is : %s' % auc)
             auc_arr1 = []
             for i in range(FLAGS.num_classes):
                 # roc_save_path = FLAGS.auc_picture_path.split('.')[0] + str(i) + '.png'
@@ -185,7 +185,7 @@ def run():
                 # logging.info('the parsed lable is : %s, len is : %s' % (parsed_label, len(parsed_label)))
                 auc1, _, _ = get_auc(parsed_pred, parsed_label)
                 auc_arr1.append(round(float(auc1), 2))
-            logging.info('Mean loss one validation set is : %s' % (sum(mean_loss) / float(len(mean_loss))))
+            logging.info('Mean loss one validation set is : %s' % (sum(epoch_loss) / float(len(epoch_loss))))
             logging.info('The auc of each class is as fellow, from auc_arr1 : %s' % auc_arr1)
 
 
