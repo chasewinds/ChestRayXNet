@@ -135,7 +135,7 @@ def run():
 
         #Get your supervisor
 
-        sv = tf.train.Supervisor(logdir=FLAGS.log_eval, summary_op=None, saver-None, init_fn=restore_fn)
+        sv = tf.train.Supervisor(logdir=FLAGS.log_eval, summary_op=None, saver=None, init_fn=restore_fn)
         #Now we are ready to run in one session
         with sv.managed_session() as sess:
             for step in xrange(num_batches_per_epoch * FLAGS.num_epochs):
