@@ -99,7 +99,7 @@ def run():
 
         # Now create the inference model but set is_training=False
         with slim.arg_scope(densenet_arg_scope(weight_decay=1e-10)):
-            logits, _ = densenet161(images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=True)
+            logits, _ = densenet161(images, num_classes=FLAGS.num_classes, is_training=True)
         
         #get all the variables to restore from the checkpoint file and create the saver function to restore
         # variables_to_restore = slim.get_variables_to_restore()
