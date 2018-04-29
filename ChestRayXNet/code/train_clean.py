@@ -151,8 +151,8 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[20, 0.001],
-                     [40, 0.0001],
+        epochs_lr = [[40, 0.001],
+                     [5, 0.0001],
                      [5, 0.00001],
                      [5, 0.000001]]
         # use one cycle learning rate stratege
