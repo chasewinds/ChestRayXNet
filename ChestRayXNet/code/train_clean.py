@@ -142,7 +142,7 @@ def run():
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
             epsilon = 1e-8
-            return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
+            return -0.95*math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - 0.05*math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
         # calculate loss
         binary_crossentropy = weighted_cross_entropy(logits, train_labels)
         total_loss = tf.reduce_mean(binary_crossentropy)
@@ -151,7 +151,7 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[50, 0.001],
+        epochs_lr = [[80, 0.001],
                      [5, 0.0001],
                      [5, 0.00001],
                      [5, 0.000001]]
