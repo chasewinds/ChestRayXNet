@@ -25,7 +25,7 @@ def _conv(inputs, num_filters, kernel_size, stride=1, dropout_rate=None,
     net = slim.conv2d(net, num_filters, kernel_size, activation_fn=tf.nn.relu)
 
     if dropout_rate:
-      net = tf.nn.dropout(net)
+      net = tf.nn.dropout(net, dropout_rate)
 
     net = slim.utils.collect_named_outputs(outputs_collections, sc.name, net)
 
