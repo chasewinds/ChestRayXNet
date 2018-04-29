@@ -89,7 +89,6 @@ def densenet(inputs,
              num_filters=None,
              num_layers=None,
              dropout_rate=None,
-             fc_dropout_rate=None,
              data_format='NHWC',
              is_training=True,
              reuse=None,
@@ -105,8 +104,7 @@ def densenet(inputs,
   if data_format == 'NCHW':
     inputs = tf.transpose(inputs, [0, 3, 1, 2])
 
-  with tf.variable_scope(scope, 'densenetxxx', [inputs, num_classes],
-                         reuse=reuse) as sc:
+  with tf.variable_scope(scope, 'densenetxxx', [inputs, num_classes], reuse=reuse) as sc:
     end_points_collection = sc.name + '_end_points'
     with slim.arg_scope([slim.batch_norm, slim.dropout],
                          is_training=is_training), \
@@ -159,14 +157,13 @@ def densenet(inputs,
       return logits, end_points
 
 
-def densenet121(inputs, fc_dropout_rate, num_classes=1000, data_format='NHWC', is_training=True, reuse=None):
+def densenet121(inputs, num_classes=1000, data_format='NHWC', is_training=True, reuse=None):
   return densenet(inputs,
                   num_classes=num_classes,
                   reduction=0.5,
                   growth_rate=32,
                   num_filters=64,
                   num_layers=[6,12,24,16],
-                  fc_dropout_rate=fc_dropout_rate,
                   data_format=data_format,
                   is_training=is_training,
                   reuse=reuse,
@@ -174,14 +171,14 @@ def densenet121(inputs, fc_dropout_rate, num_classes=1000, data_format='NHWC', i
 densenet121.default_image_size = 224
 
 
-def densenet161(inputs, fc_dropout_rate, num_classes=1000, data_format='NHWC', is_training=True, reuse=None):
+def densenet161(inputs, num_classes=1000, data_format='NHWC', is_training=True, reuse=None):
   return densenet(inputs,
                   num_classes=num_classes,
                   reduction=0.5,
                   growth_rate=48,
                   num_filters=96,
                   num_layers=[6,12,36,24],
-                  fc_dropout_rate=fc_dropout_rate,
+                  dropout_rate=0.5,
                   data_format=data_format,
                   is_training=is_training,
                   reuse=reuse,

@@ -127,7 +127,7 @@ def run():
         # TODO: feed data into network
         # feed batch wise data into network and get logits of shape (batch_size, num_classes)
         with slim.arg_scope(densenet_arg_scope()):
-            logits, _ = densenet161(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
+            logits, _ = densenet161(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
         # define the scopes doesn't restore from the ckpt file.
         exclude = ['densenet161/logits', 'densenet161/final_block', 'densenet161/squeeze']
@@ -196,6 +196,8 @@ def run():
                 except:
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
+            log_loss = round(log_loss, 3)
+            accuracy_value = round(accuracy_value, 3)
             logging.info('Epoch: %s, global step %s: learning rate: %s, LOSS: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, log_loss, accuracy_value, time_elapsed)
             # logging.info("the loss in this step is : %s" % str(int(sum(sum(log_loss))) / 14.0))
             return loss_value, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
