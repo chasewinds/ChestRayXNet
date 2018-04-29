@@ -8,7 +8,7 @@ from tensorflow.python.platform import tf_logging as logging
 from tensorflow.python.ops import math_ops
 from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
 # from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_scope
-from densenet import densenet121, densenet_arg_scope
+from densenet import densenet121, densenet161, densenet_arg_scope
 from dataset_provider import load_batch, get_split
 from auc import get_auc
 
@@ -99,7 +99,7 @@ def run():
 
         # Now create the inference model but set is_training=False
         with slim.arg_scope(densenet_arg_scope()):
-            logits, _ = densenet121(images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=True)
+            logits, _ = densenet161(images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=True)
         
         #get all the variables to restore from the checkpoint file and create the saver function to restore
         # variables_to_restore = slim.get_variables_to_restore()
