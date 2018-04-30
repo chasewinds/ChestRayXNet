@@ -138,22 +138,24 @@ def run():
             return saver.restore(sess, FLAGS.checkpoint_file)
 
         # TODO: define loss, loss is the sum of 14 binary cross entropy.
-        def weighted_cross_entropy(logits, labels, weight):
-            predictions = tf.sigmoid(logits)
-            # weight:0: 0.012736654326434312, 1: 0.9872633456735657
-            epsilon = 1e-8
-            return -weight[0]*math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - weight[1]*math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
-        # calculate loss
-        weight = [1, 1]
-        binary_crossentropy = weighted_cross_entropy(logits, train_labels, weight)
-        total_loss = tf.reduce_mean(binary_crossentropy)
+        # def weighted_cross_entropy(logits, labels, weight):
+        #     predictions = tf.sigmoid(logits)
+        #     # weight:0: 0.012736654326434312, 1: 0.9872633456735657
+        #     epsilon = 1e-8
+        #     return -weight[0]*math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - weight[1]*math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
+        # # calculate loss
+        # weight = [1, 1]
+        # binary_crossentropy = weighted_cross_entropy(logits, train_labels, weight)
+        total_loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=train_labels, logits=logits)
+        logging.info("The shape of loss is : %s" % total_loss.get_shape())
+        # total_loss = tf.reduce_mean(binary_crossentropy)
 
         # TODO: define learning rate and train operation
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[80, 0.001],
-                     [10, 0.0001],
+        epochs_lr = [[50, 0.001],
+                     [50, 0.0001],
                      [5, 0.00001],
                      [5, 0.000001]]
         # use one cycle learning rate stratege
