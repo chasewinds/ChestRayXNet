@@ -138,13 +138,14 @@ def run():
             return saver.restore(sess, FLAGS.checkpoint_file)
 
         # TODO: define loss, loss is the sum of 14 binary cross entropy.
-        def weighted_cross_entropy(logits, labels):
+        def weighted_cross_entropy(logits, labels, weight):
             predictions = tf.sigmoid(logits)
             # weight:0: 0.012736654326434312, 1: 0.9872633456735657
             epsilon = 1e-8
-            return -0.95*math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - 0.05*math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
+            return -weight[0]*math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - weight[1]*math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
         # calculate loss
-        binary_crossentropy = weighted_cross_entropy(logits, train_labels)
+        weight = [1, 1]
+        binary_crossentropy = weighted_cross_entropy(logits, train_labels, weight)
         total_loss = tf.reduce_mean(binary_crossentropy)
 
         # TODO: define learning rate and train operation
