@@ -126,11 +126,11 @@ def run():
 
         # TODO: feed data into network
         # feed batch wise data into network and get logits of shape (batch_size, num_classes)
-        with slim.arg_scope(densenet_arg_scope(weight_decay=1e-10)):
-            logits, _ = densenet161(train_images, num_classes=FLAGS.num_classes, is_training=True)
+        with slim.arg_scope(densenet_arg_scope()):
+            logits, _ = densenet121(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
         # define the scopes doesn't restore from the ckpt file.
-        exclude = ['densenet161/logits', 'densenet161/final_block', 'densenet161/squeeze']
+        exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
         # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
@@ -224,7 +224,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "txt/train_dense161_weighted")
+                    write_log(auc_arr, "txt/train_dense121_sigmoid_cross_entropy")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
