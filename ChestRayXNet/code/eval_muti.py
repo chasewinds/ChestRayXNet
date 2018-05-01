@@ -9,6 +9,8 @@ from tensorflow.python.ops import math_ops
 from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
 # from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_scope
 from densenet import densenet121, densenet161, densenet_arg_scope
+from resnet import resnet_v2_50
+from resnet_utils import resnet_arg_scope
 from dataset_provider import load_batch, get_split
 from auc import get_auc
 
@@ -98,8 +100,10 @@ def run():
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
 
         # Now create the inference model but set is_training=False
-        with slim.arg_scope(densenet_arg_scope()):
-            logits, _ = densenet121(images, num_classes=FLAGS.num_classes, is_training=True)
+        # with slim.arg_scope(densenet_arg_scope()):
+        #     logits, _ = densenet121(images, num_classes=FLAGS.num_classes, is_training=True)
+        with slim.arg_scope(resnet_arg_scope()):
+            logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
         
         #get all the variables to restore from the checkpoint file and create the saver function to restore
         # variables_to_restore = slim.get_variables_to_restore()
