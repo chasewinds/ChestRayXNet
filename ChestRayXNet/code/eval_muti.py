@@ -98,8 +98,8 @@ def run():
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
 
         # Now create the inference model but set is_training=False
-        with slim.arg_scope(densenet_arg_scope(weight_decay=1e-10)):
-            logits, _ = densenet161(images, num_classes=FLAGS.num_classes, is_training=True)
+        with slim.arg_scope(densenet_arg_scope()):
+            logits, _ = densenet121(images, num_classes=FLAGS.num_classes, is_training=True)
         
         #get all the variables to restore from the checkpoint file and create the saver function to restore
         # variables_to_restore = slim.get_variables_to_restore()
@@ -118,14 +118,15 @@ def run():
         # loss = tf.losses.log_loss(labels, sigmoid_op)
         # loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits))
         # TODO: define loss, loss is the sum of 14 binary cross entropy.
-        def weighted_cross_entropy(logits, labels):
-            predictions = tf.sigmoid(logits)
-            # weight:0: 0.012736654326434312, 1: 0.9872633456735657
-            epsilon = 1e-8
-            return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
-        # calculate loss
-        binary_crossentropy = weighted_cross_entropy(logits, labels)
-        loss = tf.reduce_mean(binary_crossentropy)
+        # def weighted_cross_entropy(logits, labels):
+        #     predictions = tf.sigmoid(logits)
+        #     # weight:0: 0.012736654326434312, 1: 0.9872633456735657
+        #     epsilon = 1e-8
+        #     return -math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - math_ops.multiply((1 - labels), math_ops.log(1 - predictions + epsilon))
+        # # calculate loss
+        # binary_crossentropy = weighted_cross_entropy(logits, labels)
+        # loss = tf.reduce_mean(binary_crossentropy)
+        loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=labels, logits=logits)
 
         #Create the global step and an increment op for monitoring
         global_step = get_or_create_global_step()
@@ -138,7 +139,7 @@ def run():
             global_step_count, step_logits, step_acc, step_loss, step_pred, step_label = sess.run([global_step_op, logits, accuracy, loss, sigmoid_prob, labels])
             time_elapsed = time.time() - start_time
 
-            logging.info('The averange accuracy of this batch(total 64 samples) is: %s, run time is:%s' % (step_acc, time_elapsed))
+            logging.info('The averange accuracy of this batch(total 128 samples) is: %s, run time is:%s' % (step_acc, time_elapsed))
             logging.info('The step loss is : %s' % step_loss)
 
             epoch_loss.append(step_loss)
