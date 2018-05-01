@@ -11,10 +11,12 @@ from sklearn.metrics import roc_auc_score
 import data_preproces
 from dataset_provider import get_split, load_batch
 from densenet import densenet121, densenet161, densenet_arg_scope
-from resnet import resnet_v2_50, resnet_arg_scope
+from resnet import resnet_v2_50
+import resnet_utils
 from vgg import vgg_16, vgg_arg_scope
 from custlearningrate import CustLearningRate
 slim = tf.contrib.slim
+resnet_arg_scope = resnet_utils.resnet_arg_scope
 
 # Inputs form shell 
 """
