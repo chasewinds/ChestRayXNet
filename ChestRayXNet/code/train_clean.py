@@ -155,7 +155,7 @@ def run():
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
         epochs_lr = [[50, 0.001],
-                     [50, 0.0001],
+                     [18, 0.0001],
                      [5, 0.00001],
                      [5, 0.000001]]
         # use one cycle learning rate stratege
@@ -224,7 +224,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "txt/train_dense121_sigmoid_cross_entropy")
+                    write_log(auc_arr, "txt/train_dense121_sigmoid_cross_entropy_l2")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
