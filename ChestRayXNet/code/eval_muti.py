@@ -93,7 +93,7 @@ def run():
             images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=is_training)
             return images, labels, dataset.num_samples
         # get train data
-        images, labels, num_samples = load_batch_from_tfrecord('test')
+        images, labels, num_samples = load_batch_from_tfrecord('validation')
 
         #Create some information about the training steps
         # assert dataset.num_samples % FLAGS.batch_size == 0, 'batch size can not be div by number sampels, the total sampels is %s' % dataset.num_samples
