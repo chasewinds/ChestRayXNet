@@ -6,6 +6,8 @@ import tensorflow as tf
 
 from resnet_utils import resnet_arg_scope
 
+import resnet_utils
+
 slim = tf.contrib.slim
 
 
