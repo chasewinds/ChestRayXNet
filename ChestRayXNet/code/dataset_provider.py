@@ -1,5 +1,6 @@
 import os
 import time
+import random
 
 import tensorflow as tf
 from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
@@ -90,13 +91,15 @@ def load_batch(dataset, batch_size, num_classes, height=224, width=224, is_train
     - labels(Tensor): the batch's labels with the shape (batch_size,) (requires one_hot_encoding).
 
     '''
+    seed = random.randint(1, 10000)
     #First create the data_provider object
     data_provider = slim.dataset_data_provider.DatasetDataProvider(
         dataset,
         num_readers=40,
         shuffle=True,
         common_queue_capacity = 64 + 64 * batch_size,
-        common_queue_min = 32 * batch_size)
+        common_queue_min = 32 * batch_size,
+        seed=seed)
         # common_queue_min = 64)
 
     #Obtain the raw image using the get method
