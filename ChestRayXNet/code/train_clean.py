@@ -116,10 +116,10 @@ def run():
         # TODO: load one batch
         def load_batch_from_tfrecord(split_name, dataset_dir=FLAGS.tfrecord_dir, num_classes=FLAGS.num_classes,
                                      tfrecord_prefix=FLAGS.tfrecord_prefix, batch_size=FLAGS.batch_size):
-            is_training = True if split_name == 'train' else False
+            # is_training = True if split_name == 'train' else False
             file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
             dataset = get_split(split_name, dataset_dir, num_classes, file_pattern, tfrecord_prefix)
-            images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=is_training)
+            images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=True)
             return images, labels, dataset.num_samples
         # get train data
         train_images, train_labels, num_samples = load_batch_from_tfrecord('validation')
