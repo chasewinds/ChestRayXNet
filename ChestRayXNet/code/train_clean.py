@@ -235,7 +235,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "txt/train_resnet50__val")
+                    write_log(auc_arr, "txt/train_resnet50_val")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
