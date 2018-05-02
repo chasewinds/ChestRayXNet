@@ -119,7 +119,7 @@ def run():
             # is_training = True if split_name == 'train' else False
             file_pattern = FLAGS.tfrecord_prefix + '_%s_*.tfrecord'
             dataset = get_split(split_name, dataset_dir, num_classes, file_pattern, tfrecord_prefix)
-            images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=True)
+            images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=False)
             return images, labels, dataset.num_samples
         # get train data
         train_images, train_labels, num_samples = load_batch_from_tfrecord('train')
