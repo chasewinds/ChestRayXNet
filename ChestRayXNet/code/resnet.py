@@ -65,6 +65,7 @@ def resnet_v2(inputs,
               output_stride=None,
               include_root_block=True,
               spatial_squeeze=True,
+              dropout_keep_prob=0.8,
               reuse=None,
               scope=None):
   """Generator for v2 (preactivation) ResNet models.
@@ -155,12 +156,19 @@ def resnet_v2(inputs,
           net = tf.reduce_mean(net, [1, 2], name='pool5', keep_dims=True)
           end_points['global_pool'] = net
         if num_classes:
-          net = slim.conv2d(net, num_classes, [1, 1], activation_fn=None,
-                            normalizer_fn=None, scope='logits')
-          end_points[sc.name + '/logits'] = net
-          if spatial_squeeze:
-            net = tf.squeeze(net, [1, 2], name='SpatialSqueeze')
-            end_points[sc.name + '/spatial_squeeze'] = net
+          # modify start:
+          # net = slim.conv2d(net, num_classes, [1, 1], activation_fn=None,
+          #                   normalizer_fn=None, scope='logits')
+          # end_points[sc.name + '/logits'] = net
+          # if spatial_squeeze:
+          #   net = tf.squeeze(net, [1, 2], name='SpatialSqueeze')
+          #   end_points[sc.name + '/spatial_squeeze'] = net
+          # use dropout for fc
+          net = slim.flatten(net)
+          net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
+                             scope='Dropout')
+          net = slim.fully_connected(net, num_classes, activation_fn=None,
+                                        scope='Logits')
           end_points['predictions'] = slim.softmax(net, scope='predictions')
         return net, end_points
 resnet_v2.default_image_size = 224

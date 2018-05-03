@@ -140,7 +140,7 @@ def run():
             logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
         # define the scopes doesn't restore from the ckpt file.
-        exclude = ['resnet_v2_50/logits', 'resnet_v2_50/SpatialSqueeze', 'resnet_v2_50/predictions']
+        exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
