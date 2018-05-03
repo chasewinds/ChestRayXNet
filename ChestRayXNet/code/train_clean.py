@@ -105,7 +105,7 @@ def write_log(auc_arr, txt_path):
 def run():
     total_prob = []
     total_label = []
-    image_size = 224
+    image_size = 299
     # create the log directory if it not exit
     if not os.path.exists(FLAGS.log_dir):
         os.mkdir(FLAGS.log_dir)
@@ -136,12 +136,18 @@ def run():
         # exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
         # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
 
-        with slim.arg_scope(resnet_arg_scope()):
-            logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
+        # with slim.arg_scope(resnet_arg_scope()):
+        #     logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
-        # define the scopes doesn't restore from the ckpt file
-        exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
-        variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
+        # # define the scopes doesn't restore from the ckpt file
+        # exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
+        # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
+
+        with slim.arg_scope(inception_resnet_v2_arg_scope()):
+            logits, _ = inception_resnet_v2(images, num_classes = dataset.num_classes, is_training = True)
+
+        exclude = ['InceptionResnetV2/Logits', 'InceptionResnetV2/AuxLogits']
+        variables_to_restore = slim.get_variables_to_restore(exclude = exclude)
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
@@ -165,7 +171,7 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[500, 0.001],
+        epochs_lr = [[50, 0.001],
                      [50, 0.0001],
                      [5, 0.00001],
                      [5, 0.000001]]
