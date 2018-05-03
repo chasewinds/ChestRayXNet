@@ -9,7 +9,7 @@ python code/train_clean.py \
     --log_txt_path 'log/resnet50/validation_log.txt' \
     --image_label_list 'data/list/14muti/label_lesion.txt' \
     --model_type 'resnet50' \
-    --checkpoint_file 'model/resnet50/resnet_v2_50.ckpt' \
+    --checkpoint_file 'model/temp/model.ckpt-90357' \
     --num_classes 14 \
     --num_epoch 1000 \
     --batch_size 64 \
