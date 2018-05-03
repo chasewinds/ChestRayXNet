@@ -14,6 +14,7 @@ from densenet import densenet121, densenet161, densenet_arg_scope
 from resnet import resnet_v2_50
 from resnet_utils import resnet_arg_scope
 from vgg import vgg_16, vgg_arg_scope
+from inception_resnet_v2 import inception_resnet_v2, inception_resnet_v2_arg_scope 
 from custlearningrate import CustLearningRate
 slim = tf.contrib.slim
 
