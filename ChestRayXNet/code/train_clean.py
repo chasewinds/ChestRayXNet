@@ -145,10 +145,10 @@ def run():
         # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
 
         with slim.arg_scope(inception_resnet_v2_arg_scope()):
-            logits, _ = inception_resnet_v2(images, num_classes = dataset.num_classes, is_training = True)
+            logits, _ = inception_resnet_v2(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
         exclude = ['InceptionResnetV2/Logits', 'InceptionResnetV2/AuxLogits']
-        variables_to_restore = slim.get_variables_to_restore(exclude = exclude)
+        variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
