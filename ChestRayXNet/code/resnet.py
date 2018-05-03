@@ -65,7 +65,7 @@ def resnet_v2(inputs,
               output_stride=None,
               include_root_block=True,
               spatial_squeeze=True,
-              dropout_keep_prob=1,
+              dropout_keep_prob=0.5,
               reuse=None,
               scope=None):
   """Generator for v2 (preactivation) ResNet models.
