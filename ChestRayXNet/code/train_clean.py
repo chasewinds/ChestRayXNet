@@ -139,7 +139,7 @@ def run():
         with slim.arg_scope(resnet_arg_scope()):
             logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
-        # define the scopes doesn't restore from the ckpt file.
+        # define the scopes doesn't restore from the ckpt file
         exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
 
