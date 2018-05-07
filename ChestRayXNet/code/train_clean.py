@@ -166,8 +166,9 @@ def run():
         # binary_crossentropy = weighted_cross_entropy(logits, train_labels, weight)
         # total_loss = tf.reduce_mean(binary_crossentropy)
 
-        total_loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=train_labels, logits=logits, reduction=Reduction.NONE)
-        total_loss = tf.reduce_sum(total_loss, 1)
+        # total_loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=train_labels, logits=logits, reduction=Reduction.NONE)
+        # total_loss = tf.reduce_sum(total_loss, 1)
+        total_loss = tf.losses.log_loss(labels=train_labels, predictions=tf.sigmoid(logits))
         logging.info("The shape of loss is : %s" % total_loss.get_shape())
         # def focal_loss(labels, logits, gamma=2.0, alpha=4.0):
             
