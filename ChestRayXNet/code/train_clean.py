@@ -172,7 +172,7 @@ def run():
             
             epsilon = 1.e-9
             labels = tf.to_int64(labels)
-            labels = tf.convert_to_tensor(labels, tf.int64)
+            labels = tf.convert_to_tensor(labels, tf.float32)
             logits = tf.convert_to_tensor(logits, tf.float32)
             num_cls = logits.shape[1]
 
