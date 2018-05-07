@@ -123,7 +123,7 @@ def run():
             images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=False)
             return images, labels, dataset.num_samples
         # get train data
-        train_images, train_labels, num_samples = load_batch_from_tfrecord('train')
+        train_images, train_labels, num_samples = load_batch_from_tfrecord('validation')
         # caculate the number steps to take before decaying the learning rate and batches per epoch
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
 
