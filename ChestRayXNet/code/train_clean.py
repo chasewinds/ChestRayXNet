@@ -237,7 +237,7 @@ def run():
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
             # log_loss = round(log_loss, 3)
-            log_loss = tf.constant([1])
+            log_loss = 1
             logging.info("The loss is : %s" % log_loss)
             accuracy_value = round(accuracy_value, 3)
             logging.info('Epoch: %s, global step %s: learning rate: %s, LOSS: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, log_loss, accuracy_value, time_elapsed)
