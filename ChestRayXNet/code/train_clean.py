@@ -166,25 +166,26 @@ def run():
         # binary_crossentropy = weighted_cross_entropy(logits, train_labels, weight)
         # total_loss = tf.reduce_mean(binary_crossentropy)
 
-        # total_loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=train_labels, logits=logits)
-        # logging.info("The shape of loss is : %s" % total_loss.get_shape())
-        def focal_loss(labels, logits, gamma=2.0, alpha=4.0):
+        total_loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=train_labels, logits=logits, reduction=None)
+        total_loss = tf.reduce_sum(total_loss, 1)
+        logging.info("The shape of loss is : %s" % total_loss.get_shape())
+        # def focal_loss(labels, logits, gamma=2.0, alpha=4.0):
             
-            epsilon = 1.e-9
-            # labels = tf.to_float32(labels)
-            # labels = tf.convert_to_tensor(labels, tf.float32)
-            logits = tf.convert_to_tensor(logits, tf.float32)
-            num_cls = logits.shape[1]
+        #     epsilon = 1.e-9
+        #     # labels = tf.to_float32(labels)
+        #     # labels = tf.convert_to_tensor(labels, tf.float32)
+        #     logits = tf.convert_to_tensor(logits, tf.float32)
+        #     num_cls = logits.shape[1]
 
-            model_out = tf.add(logits, epsilon)
-            # onehot_labels = tf.one_hot(labels, num_cls)
-            ce = tf.multiply(labels, -tf.log(model_out))
-            weight = tf.multiply(labels, tf.pow(tf.subtract(1., model_out), gamma))
-            fl = tf.multiply(alpha, tf.multiply(weight, ce))
-            reduced_fl = tf.reduce_max(fl, axis=1)
-            # reduced_fl = tf.reduce_sum(fl, axis=1)  # same as reduce_max
-            return reduced_fl
-        total_loss = focal_loss(train_labels, tf.sigmoid(logits))
+        #     model_out = tf.add(logits, epsilon)
+        #     # onehot_labels = tf.one_hot(labels, num_cls)
+        #     ce = tf.multiply(labels, -tf.log(model_out))
+        #     weight = tf.multiply(labels, tf.pow(tf.subtract(1., model_out), gamma))
+        #     fl = tf.multiply(alpha, tf.multiply(weight, ce))
+        #     reduced_fl = tf.reduce_max(fl, axis=1)
+        #     # reduced_fl = tf.reduce_sum(fl, axis=1)  # same as reduce_max
+        #     return reduced_fl
+        # total_loss = focal_loss(train_labels, tf.sigmoid(logits))
 
 
         # TODO: define learning rate and train operation
