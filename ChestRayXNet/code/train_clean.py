@@ -177,9 +177,9 @@ def run():
             num_cls = logits.shape[1]
 
             model_out = tf.add(logits, epsilon)
-            onehot_labels = tf.one_hot(labels, num_cls)
-            ce = tf.multiply(onehot_labels, -tf.log(model_out))
-            weight = tf.multiply(onehot_labels, tf.pow(tf.subtract(1., model_out), gamma))
+            # onehot_labels = tf.one_hot(labels, num_cls)
+            ce = tf.multiply(labels, -tf.log(model_out))
+            weight = tf.multiply(labels, tf.pow(tf.subtract(1., model_out), gamma))
             fl = tf.multiply(alpha, tf.multiply(weight, ce))
             reduced_fl = tf.reduce_max(fl, axis=1)
             # reduced_fl = tf.reduce_sum(fl, axis=1)  # same as reduce_max
