@@ -171,7 +171,7 @@ def run():
         def focal_loss(labels, logits, gamma=2.0, alpha=4.0):
             
             epsilon = 1.e-9
-            labels = tf.to_int64(labels)
+            labels = tf.to_float32(labels)
             labels = tf.convert_to_tensor(labels, tf.float32)
             logits = tf.convert_to_tensor(logits, tf.float32)
             num_cls = logits.shape[1]
