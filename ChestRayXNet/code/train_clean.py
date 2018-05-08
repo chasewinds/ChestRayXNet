@@ -147,7 +147,7 @@ def run():
         with slim.arg_scope(vgg_arg_scope()):
             logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
-        exclude = ['InceptionResnetV2/fc8', 'InceptionResnetV2/fc7']
+        exclude = ['vgg_16/fc8', 'vgg_16/fc7']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
