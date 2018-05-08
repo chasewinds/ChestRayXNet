@@ -106,7 +106,7 @@ def write_log(auc_arr, txt_path):
 def run():
     total_prob = []
     total_label = []
-    image_size = 299
+    image_size = 224
     # create the log directory if it not exit
     if not os.path.exists(FLAGS.log_dir):
         os.mkdir(FLAGS.log_dir)
@@ -144,10 +144,10 @@ def run():
         # exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
         # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
 
-        with slim.arg_scope(inception_resnet_v2_arg_scope()):
-            logits, _ = inception_resnet_v2(train_images, num_classes=FLAGS.num_classes, is_training=True)
+        with slim.arg_scope(vgg_arg_scope()):
+            logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
-        exclude = ['InceptionResnetV2/Logits', 'InceptionResnetV2/AuxLogits']
+        exclude = ['InceptionResnetV2/fc8', 'InceptionResnetV2/fc7']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
@@ -215,7 +215,7 @@ def run():
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, train_labels), tf.float32))
         
         # TODO: write log, those summary can be view by tensorbord
-        # tf.summary.scalar('losses/Total_Loss', total_loss)
+        tf.summary.scalar('losses/Total_Loss', total_loss)
         tf.summary.scalar('accuracy', accuracy)
         # tf.summary.scalar('learning_rate', lr)
         my_summary_op = tf.summary.merge_all()
