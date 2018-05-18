@@ -150,10 +150,10 @@ def run():
         # Create the global step for monitoring the learning_rate and training.
         global_step = get_or_create_global_step()
 
-        epochs_lr = [[10, 0.00001],
-                     [10, 0.000001],
-                     [10, 0.0000001],
-                     [10, 0.00000001]]
+        epochs_lr = [[20, 0.001],
+                     [20, 0.0001],
+                     [20, 0.00001],
+                     [10, 0.000001]]
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
@@ -166,15 +166,15 @@ def run():
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, train_labels), tf.float32))
 
-        if FLAGS.model_type == 'densenet121':
-            with slim.arg_scope(densenet_arg_scope()):
-                val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
+        # if FLAGS.model_type == 'densenet121':
+        #     with slim.arg_scope(densenet_arg_scope()):
+        #         val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
 
-        elif FLAGS.model_type == 'vgg16':
-            with slim.arg_scope(vgg_arg_scope()):
-                val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
+        # elif FLAGS.model_type == 'vgg16':
+        #     with slim.arg_scope(vgg_arg_scope()):
+        #         val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
 
-        val_probabilities = tf.sigmoid(val_logits)
+        # val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
         # val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
