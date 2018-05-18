@@ -120,7 +120,7 @@ def run():
 
         if FLAGS.model_type == 'densenet121':
             with slim.arg_scope(densenet_arg_scope()):
-                logits, _ = densenet121(train_images, fc_dropout_rate=0.5, num_classes=FLAGS.num_classes, is_training=True)
+                logits, _ = densenet121(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
             # Define the scopes that you want to exclude for restoration
             exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
@@ -166,15 +166,15 @@ def run():
         # State the metrics that you want to predict. We get a predictions that is not one_hot_encoded.
         accuracy = tf.reduce_mean(tf.cast(tf.equal(lesion_pred, train_labels), tf.float32))
 
-        # if FLAGS.model_type == 'densenet121':
-        #     with slim.arg_scope(densenet_arg_scope()):
-        #         val_logits, _ = densenet121(val_images, fc_dropout_rate=None, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
+        if FLAGS.model_type == 'densenet121':
+            with slim.arg_scope(densenet_arg_scope()):
+                val_logits, _ = densenet121(val_images, num_classes=FLAGS.num_classes, is_training=False, reuse=True)
 
-        # elif FLAGS.model_type == 'vgg16':
-        #     with slim.arg_scope(vgg_arg_scope()):
-        #         val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
+        elif FLAGS.model_type == 'vgg16':
+            with slim.arg_scope(vgg_arg_scope()):
+                val_logits, _ = vgg_16(val_images, num_classes=FLAGS.num_classes, is_training=False, dropout_keep_prob=1, reuse=True)
 
-        # val_probabilities = tf.sigmoid(val_logits)
+        val_probabilities = tf.sigmoid(val_logits)
 
         ## new loss, just equal to the sum of 14 log loss
         # val_loss = tf.losses.log_loss(labels=val_labels, predictions=val_probabilities)
