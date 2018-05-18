@@ -217,7 +217,7 @@ def run():
                 except:
                     continue
             epoch = global_step_count/num_batches_per_epoch + 1
-            logging.info('Epoch: %s, global step %s: learning rate: %s, LOSS: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, log_loss, accuracy_value, time_elapsed)
+            logging.info('Epoch: %s, global step %s: learning rate: %s, LOSS: %s, accuracy: %s , (%.2f sec/step)', epoch, global_step_count, learning_rate, total_loss, accuracy_value, time_elapsed)
             # logging.info("the loss in this step is : %s" % str(int(sum(sum(log_loss))) / 14.0))
             return total_loss, global_step_count, accuracy_value, learning_rate, my_summary_op, auc
 
