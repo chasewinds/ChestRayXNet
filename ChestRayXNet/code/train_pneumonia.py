@@ -142,7 +142,7 @@ def run():
             return -0.987*math_ops.multiply(labels, math_ops.log(predictions + epsilon)) - 0.012*math_ops.multiply(
             (1 - labels), math_ops.log(1 - predictions + epsilon))
         binary_crossentropy = weighted_cross_entropy(logits, train_labels)
-        total_loss = tf.reduce_mean(binary_crossentropy)
+        total_loss = tf.reduce_sum(binary_crossentropy)
 
         ## convert into actual predicte
         lesion_pred = tf.cast(tf.greater_equal(probabilities, 0.5), tf.float32)
