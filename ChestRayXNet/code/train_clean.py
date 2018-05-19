@@ -130,19 +130,19 @@ def run():
         # TODO: feed data into network
         # feed batch wise data into network and get logits of shape (batch_size, num_classes)
 
-        # with slim.arg_scope(densenet_arg_scope()):
-        #     logits, _ = densenet121(train_images, num_classes=FLAGS.num_classes, is_training=True)
+        with slim.arg_scope(densenet_arg_scope()):
+            logits, _ = densenet121(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
-        # # define the scopes doesn't restore from the ckpt file.
-        # exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
-        # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
-
-        with slim.arg_scope(resnet_arg_scope()):
-            logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
-
-        # define the scopes doesn't restore from the ckpt file
-        exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
+        # define the scopes doesn't restore from the ckpt file.
+        exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
         variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
+
+        # with slim.arg_scope(resnet_arg_scope()):
+        #     logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
+
+        # # define the scopes doesn't restore from the ckpt file
+        # exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
+        # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
 
         # with slim.arg_scope(vgg_arg_scope()):
         #     logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
@@ -194,17 +194,17 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[57, 0.001],
-                     [2, 0.000001],
-                     [2, 0.0000001],
-                     [1000, 0.00000001]]
+        epochs_lr = [[20, 0.001],
+                     [20, 0.0001],
+                     [20, 0.00001],
+                     [20, 0.000001]]
         # use one cycle learning rate stratege
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
         #define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=0, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # optimizer = tf.train.GradientDescentOptimizer(learning_rate=0)
         train_op = slim.learning.create_train_op(total_loss, optimizer) # minimize loss
 
@@ -266,7 +266,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "txt/train_resnet50_l2_seeval2")
+                    write_log(auc_arr, "txt/train_dense121_no_regularize")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
