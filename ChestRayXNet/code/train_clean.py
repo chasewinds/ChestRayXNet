@@ -194,7 +194,7 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[35, 0.01],
+        epochs_lr = [[35, 0.001],
                      [20, 0.0001],
                      [10, 0.00001],
                      [1000, 0.000001]]
