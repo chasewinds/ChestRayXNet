@@ -197,7 +197,7 @@ def run():
         epochs_lr = [[35, 0.01],
                      [20, 0.0001],
                      [10, 0.00001],
-                     [10, 0.000001]]
+                     [1000, 0.000001]]
         # use one cycle learning rate stratege
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
