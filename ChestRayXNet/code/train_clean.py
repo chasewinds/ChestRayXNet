@@ -137,18 +137,18 @@ def run():
         # exclude = ['densenet121/logits', 'densenet121/final_block', 'densenet121/squeeze']
         # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
 
-        # with slim.arg_scope(resnet_arg_scope()):
-        #     logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
+        with slim.arg_scope(resnet_arg_scope()):
+            logits, _ = resnet_v2_50(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
-        # # define the scopes doesn't restore from the ckpt file
-        # exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
-        # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
+        # define the scopes doesn't restore from the ckpt file
+        exclude = ['resnet_v2_50/Dropout', 'resnet_v2_50/Logits', 'resnet_v2_50/predictions']
+        variables_to_restore = slim.get_variables_to_restore(exclude=exclude)  
 
-        with slim.arg_scope(vgg_arg_scope()):
-            logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
+        # with slim.arg_scope(vgg_arg_scope()):
+        #     logits, _ = vgg_16(train_images, num_classes=FLAGS.num_classes, is_training=True)
 
-        exclude = ['vgg_16/fc8', 'vgg_16/fc7']
-        variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
+        # exclude = ['vgg_16/fc8', 'vgg_16/fc7']
+        # variables_to_restore = slim.get_variables_to_restore(exclude=exclude)
 
         # create a saver function that actually restores the variables from a checkpoint file in a sess
         saver = tf.train.Saver(variables_to_restore)
@@ -194,10 +194,10 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[50, 0.001],
-                     [50, 0.0001],
-                     [5, 0.00001],
-                     [5, 0.000001]]
+        epochs_lr = [[20, 0.001],
+                     [20, 0.0001],
+                     [10, 0.00001],
+                     [10, 0.000001]]
         # use one cycle learning rate stratege
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
