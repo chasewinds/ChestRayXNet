@@ -123,7 +123,7 @@ def run():
             images, _, labels = load_batch(dataset, batch_size, num_classes, height=image_size, width=image_size, is_training=False)
             return images, labels, dataset.num_samples
         # get train data
-        train_images, train_labels, num_samples = load_batch_from_tfrecord('train')
+        train_images, train_labels, num_samples = load_batch_from_tfrecord('validation')
         # caculate the number steps to take before decaying the learning rate and batches per epoch
         num_batches_per_epoch = (num_samples - 1) / FLAGS.batch_size + 1
 
@@ -194,7 +194,7 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[35, 0.001],
+        epochs_lr = [[35, 0.01],
                      [20, 0.0001],
                      [10, 0.00001],
                      [10, 0.000001]]
@@ -204,7 +204,7 @@ def run():
                                                    global_step=global_step,
                                                    steps_per_epoch=num_batches_per_epoch)
         #define the optimizer that takes on the learning rate
-        optimizer = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        optimizer = tf.train.AdamOptimizer(learning_rate=0, beta1=0.9, beta2=0.999, epsilon=1e-8)
         # optimizer = tf.train.GradientDescentOptimizer(learning_rate=0)
         train_op = slim.learning.create_train_op(total_loss, optimizer) # minimize loss
 
