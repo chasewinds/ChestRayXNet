@@ -5,11 +5,11 @@ python code/train_clean.py \
     --image_set_dir '/home/rubans/dataset/images' \
     --tfrecord_dir 'data/tfrecord/all' \
     --tfrecord_prefix 'chest14_all' \
-    --log_dir 'log/vgg16' \
-    --log_txt_path 'log/vgg16/validation_log.txt' \
+    --log_dir 'log/resnet50' \
+    --log_txt_path 'log/resnet50/validation_log.txt' \
     --image_label_list 'data/list/14muti/label_lesion.txt' \
-    --model_type 'vgg16' \
-    --checkpoint_file 'model/vgg/vgg_16.ckpt' \
+    --model_type 'resnet50' \
+    --checkpoint_file 'model/resnet50/resnet_v2_50.ckpt' \
     --num_classes 14 \
     --num_epoch 1000 \
     --batch_size 64 \
