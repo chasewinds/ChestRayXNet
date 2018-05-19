@@ -194,7 +194,7 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[20, 0.001],
+        epochs_lr = [[10, 0.001],
                      [20, 0.0001],
                      [10, 0.00001],
                      [10, 0.000001]]
@@ -266,7 +266,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "txt/train_resnet50_val")
+                    write_log(auc_arr, "txt/train_resnet50_l2_later")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
