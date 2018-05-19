@@ -194,10 +194,10 @@ def run():
         # creat global step count
         global_step = get_or_create_global_step()
         # FORMATE: [step size, related learning rate]
-        epochs_lr = [[35, 0.001],
-                     [20, 0.0001],
-                     [10, 0.00001],
-                     [1000, 0.000001]]
+        epochs_lr = [[58, 0.001],
+                     [2, 0.000001],
+                     [2, 0.0000001],
+                     [2, 0.00000001]]
         # use one cycle learning rate stratege
         # epochs_lr = one_cycle_lr(step_one_epoch_n=60, step_two_epoch_n=10, min_lr=0.00004, max_lr=0.0004, step_two_decay=0.1)
         lr = CustLearningRate.IntervalLearningRate(epochs_lr=epochs_lr,
@@ -266,7 +266,7 @@ def run():
                     epoch_aucs = epoch_auc(total_label, total_prob, 14)
                     logging.info('The auc of this epoch is : %s' % epoch_aucs)
                     auc_arr.append(epoch_aucs)
-                    write_log(auc_arr, "txt/train_resnet50_l2_later_3")
+                    write_log(auc_arr, "txt/train_resnet50_l2_later_better")
                     
                 # log summaries every 20 step.
                 if step % 20 == 0:
