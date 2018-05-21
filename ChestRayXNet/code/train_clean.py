@@ -43,7 +43,6 @@ flags.DEFINE_string('model_type', None, 'String, select network for training and
 
 flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')
 
-# flags.DEFINE_string('checkpoint_file', None, 'String, The file your model weight fine turn from')
 
 # Hparmeters
 flags.DEFINE_integer('num_classes', 2, 'Int, Number of classes your network output')
