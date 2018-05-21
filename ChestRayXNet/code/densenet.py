@@ -144,6 +144,7 @@ def densenet(inputs,
         net = _global_avg_pool2d(net, scope='global_avg_pool')
 
       net = slim.conv2d(net, num_classes, 1,
+                        # weights_regularizer=slim.l2_regularizer(weight_decay)
                         biases_initializer=tf.zeros_initializer(),
                         scope='logits')
       logits = tf.squeeze(net, [1, 2], name='squeeze')
